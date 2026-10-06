@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Afroza Riju — Design System Tokens
+   "The selection": one accent (selection blue) marks attention.
+   Every token here is referenced by component styles; nothing is hardcoded.
+   ========================================================================== */
+
+:root {
+  /* ---------- Color ---------- */
+  --c-bg: #161618;            /* charcoal canvas */
+  --c-bg-raised: #1d1d20;     /* panels, frames */
+  --c-bg-sunk: #111113;       /* wells, inputs */
+  --c-bg-hover: #26262a;
+  --c-ink: #eeebe4;           /* primary text  — 15.6:1 on bg */
+  --c-ink-2: #a9a59d;         /* secondary text —  7.4:1 on bg */
+  --c-ink-3: #7a776f;         /* large / decorative only — 4.1:1 */
+  --c-line: rgba(238, 235, 228, 0.11);
+  --c-line-strong: rgba(238, 235, 228, 0.22);
+  --c-accent: #7b93ff;        /* selection — 6.4:1 on bg */
+  --c-accent-rgb: 123, 147, 255;
+  --c-accent-soft: rgba(var(--c-accent-rgb), 0.14);
+  --c-accent-ink: #101218;    /* text placed on accent */
+  --c-note: #ebd27a;          /* research sticky notes (hero canvas only) */
+  --c-success: #7fd1a8;
+  --c-danger: #ff8a7a;
+
+  /* ---------- Typography ---------- */
+  --f-display: "Bricolage Grotesque", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-body: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Modular scale (1.25 base, fluid at display sizes) */
+  --t-xs: 0.75rem;
+  --t-sm: 0.875rem;
+  --t-base: 1rem;
+  --t-md: 1.125rem;
+  --t-lg: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --t-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
+  --t-2xl: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
+  --t-3xl: clamp(2.5rem, 1.5rem + 4.4vw, 5.5rem);
+  --t-hero: clamp(2.6rem, 1.4rem + 4.9vw, 6.25rem);
+  --t-mega: clamp(4rem, 1rem + 15vw, 17rem);
+
+  --lh-tight: 0.95;
+  --lh-snug: 1.15;
+  --lh-body: 1.6;
+  --track-tight: -0.035em;
+  --track-snug: -0.015em;
+
+  /* ---------- Spacing (4px base) ---------- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4rem;
+  --s-9: 6rem;
+  --s-10: 8rem;
+  --section-y: clamp(5rem, 3rem + 8vw, 10rem);
+  --gutter: clamp(1.25rem, 0.8rem + 2vw, 2.5rem);
+
+  /* ---------- Layout ---------- */
+  --w-max: 1440px;
+  --w-text: 38rem;
+  --w-wide: 72rem;
+  --nav-h: 76px;
+  --tabbar-h: 68px;
+
+  /* ---------- Radius (hierarchy, not one-size-fits-all) ---------- */
+  --r-xs: 4px;     /* chips, handles */
+  --r-sm: 8px;     /* inputs, small frames */
+  --r-md: 14px;    /* panels */
+  --r-lg: 22px;    /* media */
+  --r-pill: 999px; /* nav pill, buttons */
+
+  /* ---------- Elevation ---------- */
+  --shadow-frame: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 40px -18px rgba(0, 0, 0, 0.6);
+  --shadow-float: 0 30px 80px -30px rgba(0, 0, 0, 0.75);
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --d-fast: 160ms;
+  --d-base: 320ms;
+  --d-slow: 640ms;
+  --d-xslow: 1100ms;
+
+  /* ---------- Z-index layers ---------- */
+  --z-base: 1;
+  --z-raised: 10;
+  --z-sticky: 50;
+  --z-nav: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-cursor: 900;
+  --z-loader: 1000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --d-fast: 1ms;
+    --d-base: 1ms;
+    --d-slow: 1ms;
+    --d-xslow: 1ms;
+  }
+}

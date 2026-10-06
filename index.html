@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Afroza Riju — Product Designer | UI/UX Designer | UX &amp; HCI Researcher</title>
+  <meta name="description" content="Afroza Riju is a Product Designer (UI/UX) and UX &amp; HCI researcher in Dhaka, Bangladesh with 3+ years of experience in user research, usability testing, design systems, accessibility (WCAG) and high-fidelity prototyping, backed by a degree in Computer Science &amp; Engineering.">
+  <meta name="author" content="Afroza Riju">
+  <meta name="theme-color" content="#161618">
+  <meta name="color-scheme" content="dark">
+  <link rel="canonical" href="https://afrozariju.vercel.app/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Afroza Riju">
+  <meta property="og:title" content="Afroza Riju — Product Designer | UI/UX Designer | UX &amp; HCI Researcher">
+  <meta property="og:description" content="Research-informed product design: user research, design systems, accessibility and interaction design.">
+  <meta property="og:url" content="https://afrozariju.vercel.app/">
+  <meta property="og:image" content="https://afrozariju.vercel.app/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Afroza Riju — Product Designer | UI/UX Designer">
+  <meta name="twitter:description" content="Research-informed product design: user research, design systems, accessibility and interaction design.">
+  <meta name="twitter:image" content="https://afrozariju.vercel.app/assets/og-image.png">
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Afroza Riju">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Geist:wght@300..700&display=swap">
+
+  <link rel="stylesheet" href="./css/tokens.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Afroza Riju",
+    "jobTitle": "Product Designer (UI/UX) and UX & HCI Researcher",
+    "email": "mailto:afrozariju@gmail.com",
+    "url": "https://afrozariju.vercel.app/",
+    "address": { "@type": "PostalAddress", "addressLocality": "Dhaka", "addressCountry": "BD" },
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "Green University of Bangladesh" },
+    "knowsAbout": ["UX Research", "Usability Testing", "Product Design", "Interaction Design", "Design Systems", "Accessibility", "WCAG", "Information Architecture", "Prototyping", "Human-Computer Interaction"],
+    "sameAs": [
+      "https://www.behance.net/afrozariju",
+      "https://www.linkedin.com/in/afrozariju19/",
+      "https://www.facebook.com/afroza.riju",
+      "http://dribbble.com/afroza_riju"
+    ]
+  }
+  </script>
+  <script>
+    // Flag JS + loader state before first paint so nothing flashes.
+    document.documentElement.classList.add('js');
+    try {
+      if (sessionStorage.getItem('ar-loaded') || localStorage.getItem('ar-no-loader') || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('skip-loader');
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============ Loader ============ -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__inner">
+      <p class="loader__name"><span>Afroza</span> <span>Riju</span></p>
+      <ol class="loader__steps">
+        <li><span>01</span>Research</li>
+        <li><span>02</span>Define</li>
+        <li><span>03</span>Design</li>
+        <li><span>04</span>Test</li>
+        <li><span>05</span>Refine</li>
+      </ol>
+      <div class="loader__bar"><i></i></div>
+    </div>
+  </div>
+
+  <!-- ============ Cursor (desktop, fine pointers only) ============ -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor__dot"></div>
+    <div class="cursor__ring"><span class="cursor__label"></span></div>
+  </div>
+
+  <!-- ============ Inspect mode grid overlay ============ -->
+  <div class="spec-grid" aria-hidden="true">
+    <div class="spec-grid__inner">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+  </div>
+
+  <!-- ============ Scroll progress ============ -->
+  <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+
+  <!-- ============ Top navigation ============ -->
+  <header class="nav" id="nav">
+    <div class="nav__shell">
+      <a class="nav__brand" href="#top" aria-label="Afroza Riju, back to top" data-cursor="Top">
+        <svg viewBox="0 0 40 40" width="36" height="36" aria-hidden="true" class="nav__mark">
+          <rect x="4.5" y="4.5" width="31" height="31" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          <rect x="2" y="2" width="5" height="5" fill="var(--c-accent)"/><rect x="33" y="2" width="5" height="5" fill="var(--c-accent)"/>
+          <rect x="2" y="33" width="5" height="5" fill="var(--c-accent)"/><rect x="33" y="33" width="5" height="5" fill="var(--c-accent)"/>
+          <text x="20" y="25.5" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="13" fill="currentColor">AR</text>
+        </svg>
+        <span class="nav__brand-text">Afroza Riju</span>
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#work" data-section="work">Work</a>
+        <a href="#about" data-section="about">About</a>
+        <a href="#experience" data-section="experience">Experience</a>
+        <a href="#achievements" data-section="achievements">Achievements</a>
+        <a href="#contact" data-section="contact">Contact</a>
+      </nav>
+      <div class="nav__actions">
+        <button class="btn-inspect" id="inspectToggle" type="button" aria-pressed="false" data-cursor="Inspect">
+          <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M3 3h5M3 3v5M17 3h-5M17 3v5M3 17h5M3 17v-5M17 17h-5M17 17v-5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          <span>Inspect</span>
+        </button>
+        <a class="btn btn--accent btn--sm magnetic" href="#contact" data-cursor="Let's talk">Let's talk</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ Mobile tab bar (app-like) ============ -->
+  <nav class="tabbar" id="tabbar" aria-label="Sections">
+    <a href="#top" data-section="top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></svg><span>Home</span></a>
+    <a href="#work" data-section="work"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Work</span></a>
+    <a href="#about" data-section="about"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg><span>About</span></a>
+    <a href="#experience" data-section="experience"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5V5h6v2.5"/></svg><span>Career</span></a>
+    <a href="#contact" data-section="contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v11H8l-4 3z"/></svg><span>Contact</span></a>
+    <i class="tabbar__indicator" aria-hidden="true"></i>
+  </nav>
+
+  <main id="main">
+    <!-- ============ HERO: the live canvas ============ -->
+    <section class="hero" id="top" aria-labelledby="heroTitle" data-spec="Hero / canvas">
+      <div class="hero__canvas" id="heroCanvas" aria-hidden="false">
+        <svg class="hero__links" id="heroLinks" aria-hidden="true"></svg>
+
+        <!-- Draggable frames: focusable, movable with arrow keys -->
+        <div class="frame frame--phone" data-frame data-x="76" data-y="42" tabindex="0" role="group" aria-label="Design frame: mobile screen. Drag, or use arrow keys to move.">
+          <span class="frame__name">Home / Mobile</span>
+          <div class="frame__body">
+            <div class="mini-phone">
+              <i class="mp-bar"></i>
+              <div class="mp-card"><b></b><i></i><i class="short"></i></div>
+              <div class="mp-row"><i></i><i></i><i></i></div>
+              <div class="mp-list"><i></i><i></i><i></i></div>
+              <div class="mp-cta">Continue</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="frame frame--component" data-frame data-x="62" data-y="76" tabindex="0" role="group" aria-label="Design frame: button component with states. Drag, or use arrow keys to move.">
+          <span class="frame__name">Button / States</span>
+          <div class="frame__body states">
+            <span class="state state--default">Default</span>
+            <span class="state state--hover">Hover</span>
+            <span class="state state--focus">Focus</span>
+            <span class="state state--disabled">Disabled</span>
+          </div>
+        </div>
+
+        <div class="frame frame--note" data-frame data-x="90" data-y="70" tabindex="0" role="group" aria-label="Research note. Drag, or use arrow keys to move.">
+          <div class="frame__body note">
+            <p>Users hesitate at step 3.</p>
+            <p class="note__meta">Usability test, insight</p>
+          </div>
+        </div>
+
+        <div class="frame frame--contrast" data-frame data-x="61" data-y="24" tabindex="0" role="group" aria-label="Accessibility check: contrast passes WCAG AA. Drag, or use arrow keys to move.">
+          <div class="frame__body contrast">
+            <span class="contrast__swatch">Aa</span>
+            <span><b>15.6 : 1</b><br>WCAG AA passed</span>
+          </div>
+        </div>
+
+        <div class="frame frame--persona" data-frame data-x="91" data-y="26" tabindex="0" role="group" aria-label="Persona card. Drag, or use arrow keys to move.">
+          <div class="frame__body persona">
+            <span class="persona__avatar" aria-hidden="true"></span>
+            <span><b>Persona</b><br>First-time user</span>
+          </div>
+        </div>
+
+        <div class="collab" id="collab" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="18" height="18"><path d="M1 1l5.5 13 2-5.5L14 6.5z" fill="var(--c-accent)" stroke="#fff" stroke-width="1"/></svg>
+          <span>Afroza</span>
+        </div>
+      </div>
+
+      <div class="hero__content container">
+        <p class="hero__meta" data-bind="hero.eyebrow">Product Designer (UI/UX), UX &amp; HCI Researcher in Dhaka</p>
+        <h1 class="hero__title" id="heroTitle" data-split data-bind="hero.headline">Designing digital experiences people understand, use and remember.</h1>
+        <div class="hero__identity">
+          <p class="hero__name" data-bind="settings.name">Afroza Riju</p>
+          <p class="hero__roles">
+            <span class="hero__roles-static">I work as a</span>
+            <span class="rotator" id="roleRotator" aria-live="off">
+              <span class="rotator__word is-active">Product Designer</span>
+            </span>
+          </p>
+        </div>
+        <div class="hero__ctas">
+          <a class="btn btn--accent magnetic" href="#work" data-cursor="View work" data-bind-href="hero.ctaPrimaryHref"><span data-bind="hero.ctaPrimaryLabel">See selected work</span></a>
+          <a class="btn btn--ghost magnetic" href="#contact" data-cursor="Let's talk"><span data-bind="hero.ctaSecondaryLabel">Start a conversation</span></a>
+        </div>
+      </div>
+
+      <div class="hero__footer container" aria-hidden="true">
+        <span class="hero__coords" id="coords">X 0 &nbsp; Y 0</span>
+        <span class="hero__hint">Drag the frames. They're yours to rearrange.</span>
+        <span class="hero__scroll">Scroll</span>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT + CAPABILITIES ============ -->
+    <section class="section about" id="about" aria-labelledby="aboutTitle" data-spec="About / 12 col">
+      <div class="container">
+        <header class="section-head">
+          <h2 class="section-title" id="aboutTitle">I don't just design interfaces. I design how they feel to use.</h2>
+        </header>
+        <figure class="about__portrait sel is-selected" id="portrait" hidden></figure>
+        <p class="about__statement" id="aboutStatement" data-scrub data-bind="settings.aboutStatement">I'm a product designer and UX &amp; HCI researcher with a background in computer science. I bring research, visual design, interaction design and technical understanding together to build products that are intuitive, accessible and ready to scale.</p>
+
+        <dl class="facts" id="facts">
+          <div class="fact"><dt>Experience</dt><dd>3+ years in research-informed product design</dd></div>
+          <div class="fact"><dt>Education</dt><dd>B.Sc. Computer Science &amp; Engineering, Green University of Bangladesh. CGPA 3.20 / 4.00</dd></div>
+          <div class="fact"><dt>Based in</dt><dd>Dhaka, Bangladesh</dd></div>
+          <div class="fact"><dt>Open to</dt><dd>Full-time roles and freelance projects</dd></div>
+        </dl>
+
+        <div class="layers" id="capabilities" data-spec="Capabilities / layers panel">
+          <div class="layers__panel">
+            <p class="layers__title">Capabilities</p>
+            <div class="layers__list" role="tablist" aria-label="Skill categories" id="layersList"></div>
+          </div>
+          <div class="layers__stage" id="layersStage" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROCESS ============ -->
+    <section class="section process" id="process" aria-labelledby="processTitle" data-spec="Process / tabs">
+      <div class="container">
+        <header class="section-head section-head--split">
+          <h2 class="section-title" id="processTitle">How I think</h2>
+          <p class="section-lede">Six stages, never strictly linear. Select one to see what happens there, what comes out of it, and how I approach it.</p>
+        </header>
+        <div class="process__wrap">
+          <div class="process__rail" role="tablist" aria-label="Design process stages" id="processTabs"></div>
+          <div class="process__panel" id="processPanel" role="tabpanel" tabindex="0"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WORK ============ -->
+    <section class="section work" id="work" aria-labelledby="workTitle" data-spec="Work / sticky story">
+      <div class="container">
+        <header class="section-head section-head--split">
+          <h2 class="section-title" id="workTitle">Selected work</h2>
+          <div class="filters" role="group" aria-label="Filter projects" id="workFilters"></div>
+        </header>
+      </div>
+      <div class="work__story container" id="workStory">
+        <div class="work__stage" id="workStage" aria-hidden="true"></div>
+        <ol class="work__chapters" id="workChapters" aria-label="Projects"></ol>
+      </div>
+      <div class="container work__more">
+        <a class="link-arrow" href="https://www.behance.net/afrozariju" target="_blank" rel="noopener" data-cursor="Open" data-bind-href="social.behance">See everything on Behance</a>
+      </div>
+    </section>
+
+    <!-- ============ FEATURED MOMENT (Huawei) ============ -->
+    <section class="moment" id="moment" aria-labelledby="momentTitle" data-spec="Featured moment / cinematic"></section>
+
+    <!-- ============ EXPERIENCE ============ -->
+    <section class="section experience" id="experience" aria-labelledby="expTitle" data-spec="Experience / timeline">
+      <div class="container">
+        <header class="section-head section-head--split">
+          <h2 class="section-title" id="expTitle">Where I've worked</h2>
+          <p class="section-lede">Select a company, or a bar on the timeline, to see the role and what I contributed.</p>
+        </header>
+        <div class="exp" id="expRoot"></div>
+      </div>
+    </section>
+
+    <!-- ============ DESIGN MEETS TECHNOLOGY ============ -->
+    <section class="section tech" id="tech" aria-labelledby="techTitle" data-spec="Design meets technology / flow">
+      <div class="container">
+        <header class="section-head section-head--split">
+          <h2 class="section-title" id="techTitle">Design meets technology</h2>
+          <p class="section-lede">My computer science degree means I can follow a design all the way into code: talk constraints with engineers, spec states properly, and keep what ships close to what was designed.</p>
+        </header>
+        <div class="flow" id="flowRoot"></div>
+      </div>
+    </section>
+
+    <!-- ============ ACHIEVEMENTS ============ -->
+    <section class="section achievements" id="achievements" aria-labelledby="achTitle" data-spec="Milestones / archive">
+      <div class="container">
+        <header class="section-head section-head--split">
+          <h2 class="section-title" id="achTitle">Milestones</h2>
+          <p class="section-lede">Programs, competitions and leadership that shaped how I work.</p>
+        </header>
+        <ol class="archive" id="archive"></ol>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="section contact" id="contact" aria-labelledby="contactTitle" data-spec="Contact / form">
+      <div class="container contact__grid">
+        <div class="contact__intro">
+          <h2 class="contact__title" id="contactTitle" data-split data-bind="settings.contactHeadline">Have a problem worth designing?</h2>
+          <p class="contact__lede" data-bind="settings.contactLede">Tell me about the product, the people using it, and where it's getting stuck. I reply to every message.</p>
+          <div class="email-card">
+            <a class="email-card__link" href="mailto:afrozariju@gmail.com" data-cursor="Open" data-bind="settings.email" data-bind-mailto="settings.email">afrozariju@gmail.com</a>
+            <button class="btn-copy" type="button" id="copyEmail" data-cursor="Copy">
+              <span class="btn-copy__idle">Copy email</span><span class="btn-copy__done" aria-hidden="true">Copied</span>
+            </button>
+          </div>
+          <ul class="socials" id="socials" aria-label="Social profiles"></ul>
+        </div>
+
+        <form class="form" id="contactForm" novalidate aria-describedby="formStatus">
+          <div class="field">
+            <input class="field__input" id="f-name" name="name" type="text" autocomplete="name" required maxlength="120" placeholder=" ">
+            <label class="field__label" for="f-name">Your name</label>
+            <p class="field__error" id="f-name-err" role="alert"></p>
+          </div>
+          <div class="field">
+            <input class="field__input" id="f-email" name="email" type="email" autocomplete="email" required maxlength="200" placeholder=" " inputmode="email">
+            <label class="field__label" for="f-email">Email address</label>
+            <p class="field__error" id="f-email-err" role="alert"></p>
+          </div>
+          <fieldset class="field field--choice">
+            <legend class="field__legend">What is this about?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="projectType" value="Full-time role" checked><span>Full-time role</span></label>
+              <label class="choice"><input type="radio" name="projectType" value="Freelance project"><span>Freelance project</span></label>
+              <label class="choice"><input type="radio" name="projectType" value="UX research"><span>UX research</span></label>
+              <label class="choice"><input type="radio" name="projectType" value="Something else"><span>Something else</span></label>
+            </div>
+          </fieldset>
+          <div class="field">
+            <textarea class="field__input field__input--area" id="f-message" name="message" rows="5" required minlength="10" maxlength="5000" placeholder=" "></textarea>
+            <label class="field__label" for="f-message">What are you working on?</label>
+            <p class="field__count" aria-hidden="true"><span id="msgCount">0</span> / 5000</p>
+            <p class="field__error" id="f-message-err" role="alert"></p>
+          </div>
+          <!-- Honeypot: hidden from people, visible to bots -->
+          <div class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="company" tabindex="-1" autocomplete="off"></label></div>
+          <button class="btn btn--accent btn--lg form__submit magnetic" type="submit" data-cursor="Send">
+            <span class="form__submit-label">Send message</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer" data-spec="Footer">
+    <div class="container">
+      <p class="footer__statement" data-split data-bind="settings.footerText">Designed with curiosity. Built with intention.</p>
+      <div class="footer__grid">
+        <div>
+          <p class="footer__name" data-bind="settings.name">Afroza Riju</p>
+          <p class="footer__role" data-bind="settings.role">Product Designer (UI/UX), UX &amp; HCI Researcher</p>
+        </div>
+        <ul class="footer__links" id="footerLinks" aria-label="Elsewhere"></ul>
+        <div class="footer__end">
+          <a href="#top" class="link-arrow link-arrow--up" data-cursor="Top">Back to top</a>
+          <p class="footer__copy">© <span id="year"></span> Afroza Riju</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Page transition curtain -->
+  <div class="curtain" id="curtain" aria-hidden="true"><span class="curtain__label"></span></div>
+  <!-- Toast region -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <noscript><div class="noscript">This portfolio works best with JavaScript enabled. You can still reach Afroza at <a href="mailto:afrozariju@gmail.com">afrozariju@gmail.com</a> or on <a href="https://www.behance.net/afrozariju">Behance</a>.</div></noscript>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

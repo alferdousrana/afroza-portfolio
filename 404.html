@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Page not found — Afroza Riju</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#161618">
+  <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Geist:wght@300..700&display=swap">
+  <style>
+    :root { --bg:#161618; --ink:#eeebe4; --mut:#a9a59d; --acc:#7b93ff; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:var(--bg); color:var(--ink); font:16px/1.6 Geist, system-ui, sans-serif;
+      background-image: radial-gradient(rgba(238,235,228,.1) 1px, transparent 1.2px); background-size: 24px 24px; }
+    main { max-width: 560px; }
+    .frame { position:relative; display:inline-block; padding:6px 14px; margin-bottom:28px; outline:1px solid var(--acc); }
+    .frame i { position:absolute; width:8px; height:8px; background:var(--acc); }
+    .frame i:nth-child(1){top:-4px;left:-4px}.frame i:nth-child(2){top:-4px;right:-4px}.frame i:nth-child(3){bottom:-4px;left:-4px}.frame i:nth-child(4){bottom:-4px;right:-4px}
+    h1 { margin:0; font-family:"Bricolage Grotesque", sans-serif; font-variation-settings:"opsz" 96,"wdth" 82; font-size:clamp(3rem,10vw,6rem); line-height:.9; letter-spacing:-.04em; font-weight:650; }
+    p { color:var(--mut); margin:20px 0 32px; font-size:18px; }
+    a { display:inline-flex; align-items:center; min-height:48px; padding:0 24px; border-radius:999px; background:var(--acc); color:#101218; font-weight:600; text-decoration:none; }
+    a:focus-visible { outline:2px solid var(--ink); outline-offset:3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="frame"><i></i><i></i><i></i><i></i><h1>404</h1></div>
+    <p>This page isn't part of the flow. The link may be old or mistyped. The work, the story and the contact form are all on the home page.</p>
+    <a href="/">Go to the portfolio</a>
+  </main>
+  <script>
+    // On GitHub Pages project sites the root is /<repo>/, so point home there.
+    (function () {
+      var parts = location.pathname.split('/').filter(Boolean);
+      if (location.hostname.endsWith('github.io') && parts.length) {
+        document.querySelector('a').href = '/' + parts[0] + '/';
+      }
+    })();
+  </script>
+</body>
+</html>

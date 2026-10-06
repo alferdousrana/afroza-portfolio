@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // An admin is any signed-in user whose UID has a document in /admins.
+    // Create that document by hand in the Firebase console. Nobody can write it from the client.
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Projects: the public only sees published ones.
+    match /projects/{id} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Public content collections and singleton documents: readable by anyone, writable by admins
+    match /experience/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /achievements/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /skills/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /socialLinks/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /processSteps/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /techFlow/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /siteSettings/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /heroContent/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /featured/{id} { allow read: if true; allow write: if isAdmin(); }
+
+    // Contact form: anyone can create a well-formed message; only admins can read or manage them.
+    match /contactMessages/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['name', 'email', 'projectType', 'message', 'read', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 120
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 200
+        && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+        && request.resource.data.projectType is string && request.resource.data.projectType.size() <= 60
+        && request.resource.data.message is string
+        && request.resource.data.message.size() >= 10 && request.resource.data.message.size() <= 5000
+        && request.resource.data.read == false
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Deny everything else by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

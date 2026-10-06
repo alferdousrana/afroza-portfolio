@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Case study — Afroza Riju</title>
+  <meta name="description" content="A product design case study by Afroza Riju, Product Designer (UI/UX) and UX & HCI Researcher.">
+  <meta name="theme-color" content="#161618">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Afroza Riju">
+  <meta property="og:image" content="https://afrozariju.vercel.app/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Geist:wght@300..700&display=swap">
+  <link rel="stylesheet" href="./css/tokens.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+  <link rel="stylesheet" href="./css/case-study.css">
+  <script>
+    document.documentElement.classList.add('js');
+    try { if (sessionStorage.getItem('ar-transition')) document.documentElement.classList.add('from-transition'); } catch (e) {}
+  </script>
+</head>
+<body class="cs-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="cursor" id="cursor" aria-hidden="true"><div class="cursor__dot"></div><div class="cursor__ring"><span class="cursor__label"></span></div></div>
+  <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+
+  <header class="nav is-compact" id="nav">
+    <div class="nav__shell">
+      <a class="nav__brand" href="./index.html" aria-label="Afroza Riju, home">
+        <svg viewBox="0 0 40 40" width="36" height="36" aria-hidden="true" class="nav__mark">
+          <rect x="4.5" y="4.5" width="31" height="31" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          <rect x="2" y="2" width="5" height="5" fill="var(--c-accent)"/><rect x="33" y="2" width="5" height="5" fill="var(--c-accent)"/>
+          <rect x="2" y="33" width="5" height="5" fill="var(--c-accent)"/><rect x="33" y="33" width="5" height="5" fill="var(--c-accent)"/>
+          <text x="20" y="25.5" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="13" fill="currentColor">AR</text>
+        </svg>
+        <span class="nav__brand-text">Afroza Riju</span>
+      </a>
+      <div class="nav__actions">
+        <a class="btn btn--ghost btn--sm" href="./index.html#work" data-cursor="Back">All work</a>
+        <a class="btn btn--accent btn--sm magnetic" href="./index.html#contact" data-cursor="Let's talk">Let's talk</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="cs" aria-busy="true">
+    <div class="container cs-loading" id="csLoading">
+      <div class="skeleton" style="height:18px;width:140px"></div>
+      <div class="skeleton" style="height:clamp(48px,8vw,110px);width:min(720px,90%);margin-top:20px"></div>
+      <div class="skeleton" style="height:20px;width:min(480px,80%);margin-top:20px"></div>
+      <div class="skeleton" style="aspect-ratio:16/9;width:100%;margin-top:48px;border-radius:22px"></div>
+    </div>
+  </main>
+
+  <dialog class="lightbox" id="lightbox" aria-label="Image viewer">
+    <button class="lightbox__close" type="button" aria-label="Close image viewer">Close</button>
+    <figure><img alt=""><figcaption></figcaption></figure>
+  </dialog>
+
+  <div class="curtain" id="curtain" aria-hidden="true"><span class="curtain__label"></span></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./js/case-study.js"></script>
+</body>
+</html>
