@@ -9,6 +9,8 @@ import { $, $$, esc, safeUrl, motionOK, toast, applyAccent } from './utils.js';
 import { loadContent, submitContact } from './content.js';
 import { isFirebaseConfigured } from './firebase.js';
 import { initCursor } from './cursor.js';
+import { initTheme } from './theme.js';
+import { applyFontPair } from './fonts.js';
 import { onScroll, splitWords, observeReveals, scrubWords, initProgress, initMagnetic } from './animations.js';
 import { initHero } from './hero.js';
 import { renderWork } from './projects.js';
@@ -45,7 +47,7 @@ function runLoader(contentReady) {
    Navigation — transparent → floating pill; active section; mobile tab bar
    ========================================================================== */
 const NAV_MAP = { top: 'top', about: 'about', process: 'about', work: 'work', moment: 'work', experience: 'experience', tech: 'experience', achievements: 'achievements', contact: 'contact' };
-const TAB_MAP = { top: 0, work: 1, about: 2, experience: 3, achievements: 3, contact: 4 };
+const TAB_MAP = { top: 0, about: 1, work: 2, experience: 3, achievements: 3, contact: 4 };
 
 function initNav() {
   const nav = $('#nav'), tabbar = $('#tabbar');
@@ -132,6 +134,7 @@ function applySettings(s) {
   if (s.seoTitle) document.title = s.seoTitle;
   if (s.seoDescription) $('meta[name="description"]')?.setAttribute('content', s.seoDescription);
   if (s.accentColor) applyAccent(s.accentColor);
+  applyFontPair(s.fontPair || 'geist');
   document.body.classList.toggle('no-grain', s.showGrain === false);
   if (s.favicon?.url) $('link[rel="icon"]')?.setAttribute('href', safeUrl(s.favicon.url));
   try { s.showLoader === false ? localStorage.setItem('ar-no-loader', '1') : localStorage.removeItem('ar-no-loader'); } catch (e) { /* ignore */ }
@@ -273,6 +276,7 @@ function initPWA() {
    ========================================================================== */
 async function boot() {
   let content = null;
+  initTheme();
   initCursor();
   initProgress();
   initNav();

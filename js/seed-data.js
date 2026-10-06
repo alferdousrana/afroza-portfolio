@@ -23,6 +23,7 @@ export const seed = {
     contactLede: "Tell me about the product, the people using it, and where it's getting stuck. I reply to every message.",
     footerText: 'Designed with curiosity. Built with intention.',
     accentColor: '#7b93ff',
+    fontPair: 'geist',
     showGrain: true,
     showLoader: true
   },
@@ -202,6 +203,7 @@ export const seed = {
   featured: {
     published: true,
     embed: true,
+    videoUrl: './assets/video/huawei-interview.mp4',
     label: 'Featured moment',
     mega: 'HUAWEI ICT',
     title: 'Press Interviewer at the Huawei ICT Startup Competition',

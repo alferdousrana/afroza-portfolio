@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Case study — Afroza Riju</title>
   <meta name="description" content="A product design case study by Afroza Riju, Product Designer (UI/UX) and UX & HCI Researcher.">
-  <meta name="theme-color" content="#161618">
-  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#14121f">
+  <meta name="color-scheme" content="dark light">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Afroza Riju">
   <meta property="og:image" content="https://afrozariju.vercel.app/assets/og-image.png">
@@ -17,6 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap">
+  <script>try{var f=JSON.parse(localStorage.getItem('ar-font')||'null');if(f&&f.href){var l=document.createElement('link');l.id='font-pair';l.rel='stylesheet';l.href=f.href;document.head.appendChild(l);var s=document.documentElement.style;s.setProperty('--f-display',f.display);s.setProperty('--f-body',f.body);s.setProperty('--fw-display',f.weight);s.setProperty('--ls-display',f.tracking);}}catch(e){}</script>
   <link rel="stylesheet" href="./css/tokens.css">
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/animations.css">
@@ -24,6 +25,7 @@
   <link rel="stylesheet" href="./css/case-study.css">
   <script>
     document.documentElement.classList.add('js');
+    try{var t=localStorage.getItem('ar-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.dataset.theme=t;}catch(e){}
     try { if (sessionStorage.getItem('ar-transition')) document.documentElement.classList.add('from-transition'); } catch (e) {}
   </script>
 </head>
@@ -44,8 +46,12 @@
         <span class="nav__brand-text">Afroza Riju</span>
       </a>
       <div class="nav__actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to light theme" data-cursor="Theme">
+          <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
         <a class="btn btn--ghost btn--sm" href="./index.html#work" data-cursor="Back">All work</a>
-        <a class="btn btn--accent btn--sm magnetic" href="./index.html#contact" data-cursor="Let's talk">Let's talk</a>
+        <a class="btn btn--warm btn--sm magnetic" href="./index.html#contact" data-cursor="Let's talk">Let's talk</a>
       </div>
     </div>
   </header>

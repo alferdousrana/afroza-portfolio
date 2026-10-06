@@ -5,6 +5,8 @@
 import { $, $$, esc, safeUrl, richOrPlain, motionOK, applyAccent } from './utils.js';
 import { loadContent } from './content.js';
 import { initCursor } from './cursor.js';
+import { initTheme } from './theme.js';
+import { applyFontPair } from './fonts.js';
 import { splitWords, observeReveals, initProgress, initMagnetic } from './animations.js';
 import { coverHTML, guardImages, caseUrl, transitionTo } from './projects.js';
 import { CASE_SECTIONS } from './case-sections.js';
@@ -130,12 +132,14 @@ function renderMissing() {
 }
 
 async function boot() {
+  initTheme();
   initCursor();
   initProgress();
   const curtain = $('#curtain');
   const slug = new URLSearchParams(location.search).get('p');
   const content = await loadContent();
   if (content.settings?.accentColor) applyAccent(content.settings.accentColor);
+  applyFontPair(content.settings?.fontPair || 'geist');
   const list = content.projects || [];
   const i = list.findIndex((p) => (p.slug || p.id) === slug);
   if (i < 0) renderMissing();

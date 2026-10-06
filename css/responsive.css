@@ -37,6 +37,7 @@
 
   /* Top bar becomes a slim app header */
   .nav__links, .nav__actions .btn-inspect { display: none; }
+  .theme-toggle { width: 44px; height: 44px; }
   .nav.is-compact .nav__shell { max-width: calc(100% - 24px); height: 52px; padding: 0 6px 0 10px; margin-top: 8px; }
   .nav.is-compact .nav__brand-text { opacity: 1; max-width: 160px; }
   .nav__brand-text { font-size: var(--t-sm); }
@@ -49,7 +50,7 @@
     height: var(--tabbar-h);
     padding: 6px;
     border-radius: 22px;
-    background: rgba(29, 29, 32, 0.82);
+    background: rgb(var(--c-raised-rgb) / 0.82);
     border: 1px solid var(--c-line);
     box-shadow: var(--shadow-float);
     -webkit-backdrop-filter: blur(20px) saturate(150%);
@@ -73,7 +74,7 @@
     position: absolute; top: 6px; bottom: 6px; left: 6px;
     width: calc((100% - 12px) / 5);
     border-radius: 16px;
-    background: rgba(238, 235, 228, 0.07);
+    background: rgb(var(--c-ink-rgb) / 0.07);
     transform: translateX(calc(var(--tab, 0) * 100%));
     transition: transform var(--d-slow) var(--ease-spring);
   }

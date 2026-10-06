@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap">
   <link rel="stylesheet" href="../css/tokens.css">
   <link rel="stylesheet" href="./admin.css">
+  <script>try{var t=localStorage.getItem('ar-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
 <body>
   <a class="skip-link" href="#view">Skip to content</a>
@@ -37,6 +38,7 @@
       <nav class="side__nav" id="sideNav" aria-label="Admin sections"></nav>
       <div class="side__foot">
         <a class="side__link" href="../index.html" target="_blank" rel="noopener">View site</a>
+        <button class="side__link" type="button" data-theme-toggle aria-label="Switch to light theme">Light / dark theme</button>
         <button class="side__link" type="button" id="signOut">Sign out</button>
         <p class="side__user" id="userEmail"></p>
       </div>

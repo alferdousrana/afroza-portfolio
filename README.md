@@ -22,15 +22,16 @@ Until Firebase is configured, the site runs on the default content in `js/seed-d
 
 ## 2. Design system
 
-| Token | Value | Role |
-|---|---|---|
-| `--c-bg` | `#161618` | Charcoal canvas |
-| `--c-ink` | `#eeebe4` | Primary text (15.6:1) |
-| `--c-ink-2` | `#a9a59d` | Secondary text (7.4:1) |
-| `--c-accent` | `#7b93ff` | **Selection**, the only accent (6.4:1) |
-| `--c-note` | `#ebd27a` | Research sticky notes, hero canvas only |
+| Token | Dark | Light | Role |
+|---|---|---|---|
+| `--c-bg` | `#14121f` | `#fbf6f2` | Canvas |
+| `--c-ink` | `#f4eef0` | `#26224f` | Primary text |
+| `--c-ink-2` | `#b3acc4` | `#5e5a7a` | Secondary text |
+| `--c-accent` | `#a99bf0` | `#4a3f9f` | **Selection** (focus, active, links) |
+| `--c-warm` | `#f09a7f` | `#e2775b` | Coral: call-to-action buttons, ✦ sparkles |
 
-- **Type:** Bricolage Grotesque (display, variable opsz/width/weight) and Geist (body and UI).
+- **Type:** seven font pairs in `js/fonts.js` (Geist by default), chosen in Studio → Settings → Typography. Preview any pair without saving with `?font=editorial`, `?font=cormorant`, `?font=dmserif`, `?font=fraunces`, `?font=jakarta` or `?font=manrope`.
+- **Themes:** dark (default) and light, defined in `css/tokens.css`. First visit follows the system setting; the sun/moon toggle saves the visitor's choice (`js/theme.js`). The Huawei section always stays dark. Custom accent colours are adjusted per theme to keep 4.5:1 contrast.
 - **Motif:** a selection outline with four corner handles, as in a design tool. It marks hover, active and keyboard focus everywhere (`.sel` in `css/style.css`).
 - **Tokens:** every color, size, space, radius, shadow, duration, easing and z-index is defined in `css/tokens.css`.
 - **Motion rule:** each animation must communicate hierarchy, feedback, orientation or progress. All motion uses transform, opacity or clip-path, and `prefers-reduced-motion` removes movement, the loader and the custom cursor.

@@ -6,7 +6,7 @@
  *  - Firebase, admin and other origins: always network (never cached)
  * Bump VERSION whenever you deploy changes to cached files.
  */
-const VERSION = 'ar-v1.0.0';
+const VERSION = 'ar-v1.4.0';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const FONTS = 'ar-fonts-v1';
@@ -16,7 +16,7 @@ const PRECACHE = [
   './css/tokens.css', './css/style.css', './css/animations.css', './css/responsive.css', './css/case-study.css',
   './js/app.js', './js/utils.js', './js/config.js', './js/firebase.js', './js/content.js', './js/seed-data.js',
   './js/cursor.js', './js/animations.js', './js/hero.js', './js/sections.js', './js/projects.js',
-  './js/case-study.js', './js/case-sections.js',
+  './js/case-study.js', './js/case-sections.js', './js/theme.js', './js/fonts.js',
   './assets/icons/favicon.svg', './assets/icons/icon-192.png', './assets/icons/icon-512.png', './assets/icons/apple-touch-icon.png'
 ];
 
@@ -51,7 +51,8 @@ self.addEventListener('fetch', (event) => {
 
   // Everything else cross-origin (Firebase, Behance, Facebook) stays on the network
   if (url.origin !== self.location.origin) return;
-  // Admin is never served from cache
+  // Admin and video are never cached (video uses range requests and is large)
+  if (/\.(mp4|webm|mov)$/i.test(url.pathname)) return;
   if (url.pathname.includes('/admin/')) return;
 
   // Pages: network-first

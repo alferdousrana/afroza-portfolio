@@ -93,20 +93,43 @@ export function toast(message, ms = 2600) {
   toastTimer = setTimeout(() => el.classList.remove('is-on'), ms);
 }
 
-/** Apply admin-chosen accent color, deriving the rgb triplet for alpha use. */
+/**
+ * Apply an admin-chosen accent colour.
+ * The same hue is adjusted per theme until it reaches 4.5:1 against the
+ * background, so a custom accent can never make text unreadable.
+ * The default accent is left to the theme tokens.
+ */
+const DEFAULTS = ['7b93ff', 'a99bf0', '4a3f9f'];
+let accentBase = null;
+const lin = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+const lum = ([r, g, b]) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
 export function applyAccent(hex) {
   const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || '').trim());
   if (!m) return;
-  const n = parseInt(m[1], 16);
-  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
-  const root = document.documentElement.style;
-  root.setProperty('--c-accent', `#${m[1]}`);
-  root.setProperty('--c-accent-rgb', `${r}, ${g}, ${b}`);
-  // Pick readable ink on the accent (WCAG relative luminance)
-  const lin = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
-  const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-  root.setProperty('--c-accent-ink', L > 0.18 ? '#101218' : '#ffffff');
+  accentBase = m[1].toLowerCase();
+  paintAccent();
 }
+function paintAccent() {
+  const st = document.documentElement.style;
+  if (!accentBase || DEFAULTS.includes(accentBase)) {
+    ['--c-accent', '--c-accent-rgb', '--c-accent-ink', '--c-accent-hover'].forEach((p) => st.removeProperty(p));
+    return;
+  }
+  const n = parseInt(accentBase, 16);
+  let rgb = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  const light = document.documentElement.dataset.theme === 'light';
+  const bg = light ? [251, 246, 242] : [20, 18, 31];
+  for (let i = 0; i < 20 && ratio(rgb, bg) < 4.5; i++) {
+    rgb = rgb.map((c) => Math.round(light ? c * 0.9 : c + (255 - c) * 0.12));
+  }
+  const hexOut = `#${rgb.map((c) => c.toString(16).padStart(2, '0')).join('')}`;
+  st.setProperty('--c-accent', hexOut);
+  st.setProperty('--c-accent-hover', hexOut);
+  st.setProperty('--c-accent-rgb', rgb.join(', '));
+  st.setProperty('--c-accent-ink', ratio(rgb, [16, 18, 24]) >= ratio(rgb, [255, 255, 255]) ? '#101218' : '#ffffff');
+}
+window.addEventListener('themechange', paintAccent);
 
 /** Social icon paths (simple, 24×24, filled). */
 export const ICONS = {

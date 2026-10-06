@@ -1,28 +1,94 @@
 /* ==========================================================================
    Afroza Riju — Design System Tokens
-   "The selection": one accent (selection blue) marks attention.
+   "The selection": the primary accent marks attention; coral is the warm
+   secondary accent for calls to action, following the reference palette.
    Every token here is referenced by component styles; nothing is hardcoded.
    ========================================================================== */
 
-:root {
-  /* ---------- Color ---------- */
-  --c-bg: #161618;            /* charcoal canvas */
-  --c-bg-raised: #1d1d20;     /* panels, frames */
-  --c-bg-sunk: #111113;       /* wells, inputs */
-  --c-bg-hover: #26262a;
-  --c-ink: #eeebe4;           /* primary text  — 15.6:1 on bg */
-  --c-ink-2: #a9a59d;         /* secondary text —  7.4:1 on bg */
-  --c-ink-3: #7a776f;         /* large / decorative only — 4.1:1 */
-  --c-line: rgba(238, 235, 228, 0.11);
-  --c-line-strong: rgba(238, 235, 228, 0.22);
-  --c-accent: #7b93ff;        /* selection — 6.4:1 on bg */
-  --c-accent-rgb: 123, 147, 255;
+/* ==========================================================================
+   Color themes
+   Dark is the default. Light is set by [data-theme="light"] on <html>
+   (chosen by the visitor, or following the system on first visit).
+   The Huawei "moment" section always uses the dark set: it is cinematic.
+   ========================================================================== */
+/* ---------- Dark (default) — deep indigo night ---------- */
+:root,
+:root[data-theme="light"] .moment,
+:root[data-theme="light"] .footer {
+  color-scheme: dark;
+  --c-bg: #14121f;            /* indigo-black canvas */
+  --c-bg-raised: #1c1a2b;     /* panels, frames */
+  --c-bg-sunk: #100e19;       /* wells, inputs */
+  --c-bg-hover: #262338;
+  --c-ink: #f4eef0;           /* primary text  — 16.5:1 */
+  --c-ink-rgb: 244 238 240;
+  --c-ink-2: #b3acc4;         /* secondary text — 8.3:1 */
+  --c-ink-3: #7d7792;         /* large / decorative only */
+  --c-raised-rgb: 28 26 43;
+  --c-line: rgb(244 238 240 / 0.10);
+  --c-line-strong: rgb(244 238 240 / 0.20);
+  --c-accent: #a99bf0;        /* lavender selection — 7.9:1 */
+  --c-accent-rgb: 169, 155, 240;
   --c-accent-soft: rgba(var(--c-accent-rgb), 0.14);
-  --c-accent-ink: #101218;    /* text placed on accent */
-  --c-note: #ebd27a;          /* research sticky notes (hero canvas only) */
-  --c-success: #7fd1a8;
-  --c-danger: #ff8a7a;
+  --c-accent-ink: #1a1633;
+  --c-accent-hover: #bdb2f5;
+  --c-warm: #f09a7f;          /* peach-coral: CTAs, sparkles */
+  --c-warm-ink: #241a33;
+  --c-warm-hover: #f5ae97;
+  --c-warm-text: #f3a68e;     /* coral text on bg — 8.2:1 */
+  --c-note: #f2c4b2;
+  --c-success: #8fd6b4;
+  --c-danger: #ff9584;
+  --c-backdrop: rgb(10 8 20 / 0.65);
+  --c-cinema: #0e0c1c;
+  --shadow-frame: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 40px -18px rgba(0, 0, 0, 0.65);
+  --shadow-float: 0 30px 80px -30px rgba(0, 0, 0, 0.8);
+  --grain-opacity: 0.05;
+  --dot: rgb(244 238 240 / 0.12);
+  --glow: radial-gradient(42% 52% at 76% 44%, rgba(169, 155, 240, 0.16), transparent 70%),
+          radial-gradient(30% 36% at 88% 70%, rgba(240, 154, 127, 0.08), transparent 70%);
+}
 
+/* ---------- Light — blush cream, navy ink, lavender + coral ---------- */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --c-bg: #fbf6f2;            /* blush cream */
+  --c-bg-raised: #ffffff;
+  --c-bg-sunk: #f4ede8;
+  --c-bg-hover: #efe6e1;
+  --c-ink: #26224f;           /* navy-indigo — 13.4:1 */
+  --c-ink-rgb: 38 34 79;
+  --c-ink-2: #5e5a7a;         /* 6.0:1 */
+  --c-ink-3: #9a93ae;         /* large / decorative only */
+  --c-raised-rgb: 255 255 255;
+  --c-line: rgb(38 34 79 / 0.10);
+  --c-line-strong: rgb(38 34 79 / 0.20);
+  --c-accent: #4a3f9f;        /* indigo selection — 8.0:1 */
+  --c-accent-rgb: 74, 63, 159;
+  --c-accent-soft: rgba(var(--c-accent-rgb), 0.09);
+  --c-accent-ink: #ffffff;    /* 8.6:1 */
+  --c-accent-hover: #3d3389;
+  --c-warm: #e2775b;          /* coral: CTAs, sparkles */
+  --c-warm-ink: #26224f;      /* navy on coral — 5.0:1 */
+  --c-warm-hover: #d96a4d;
+  --c-warm-text: #b84d33;     /* coral text on cream — 4.9:1 */
+  --c-note: #f6d9cb;          /* peach sticky note */
+  --c-success: #1d7f53;
+  --c-danger: #c2412d;
+  --c-backdrop: rgb(38 34 79 / 0.32);
+  --c-cinema: #0e0c1c;
+  --shadow-frame: 0 1px 2px rgba(38, 34, 79, 0.06), 0 14px 32px -16px rgba(38, 34, 79, 0.22);
+  --shadow-float: 0 24px 60px -24px rgba(38, 34, 79, 0.28);
+  --grain-opacity: 0.025;
+  --dot: rgb(38 34 79 / 0.13);
+  --glow: radial-gradient(40% 55% at 76% 44%, rgba(201, 184, 232, 0.55), transparent 70%),
+          radial-gradient(28% 40% at 86% 62%, rgba(246, 205, 186, 0.55), transparent 70%);
+}
+/* Navy panels inside the light theme, as in the reference */
+:root[data-theme="light"] .footer { --c-bg: #262150; --c-bg-raised: #2e2960; --c-line: rgb(244 238 240 / 0.14); }
+:root[data-theme="light"] .moment { --c-cinema: #1f1a44; }
+
+:root {
   /* ---------- Typography ---------- */
   --f-display: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --f-body: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -32,12 +98,16 @@
   --t-sm: 0.875rem;
   --t-base: 1rem;
   --t-md: 1.125rem;
-  --t-lg: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
-  --t-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
-  --t-2xl: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
-  --t-3xl: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem);
-  --t-hero: clamp(2.5rem, 1.4rem + 4.4vw, 5.75rem);
-  --t-mega: clamp(3.5rem, 1rem + 12vw, 13rem);
+  --t-lg: clamp(1.125rem, 1.05rem + 0.35vw, 1.3rem);
+  --t-xl: clamp(1.3rem, 1.15rem + 0.6vw, 1.7rem);
+  --t-2xl: clamp(1.6rem, 1.25rem + 1.5vw, 2.6rem);
+  --t-3xl: clamp(1.9rem, 1.35rem + 2.3vw, 3.4rem);
+  --t-hero: clamp(2.2rem, 1.35rem + 3.4vw, 4.6rem);
+  --t-mega: clamp(3rem, 1rem + 9.5vw, 10rem);
+
+  /* Display font metrics: switched by the admin font setting */
+  --fw-display: 500;
+  --ls-display: -0.035em;
 
   --lh-tight: 0.95;
   --lh-snug: 1.15;
@@ -72,10 +142,6 @@
   --r-md: 14px;    /* panels */
   --r-lg: 22px;    /* media */
   --r-pill: 999px; /* nav pill, buttons */
-
-  /* ---------- Elevation ---------- */
-  --shadow-frame: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 40px -18px rgba(0, 0, 0, 0.6);
-  --shadow-float: 0 30px 80px -30px rgba(0, 0, 0, 0.75);
 
   /* ---------- Motion ---------- */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

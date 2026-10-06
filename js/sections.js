@@ -128,13 +128,21 @@ export function renderMoment(f) {
             <span class="reel__poster-title">${esc(f.posterTitle || 'Interview feature')}</span>
           </span>
           <span class="reel__play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>`;
-  const embed = useEmbed
-    ? `<div class="reel reel--embed">
+  const iframe = `<div class="reel reel--embed">
          <iframe src="${esc(embedSrc)}" title="Huawei ICT interview reel (Facebook video)" loading="lazy"
            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen
            referrerpolicy="strict-origin-when-cross-origin"></iframe>
+       </div>`;
+  const fallback = useEmbed ? iframe : poster(posterInner);
+  // Priority: self-hosted video file → Facebook embed → designed poster
+  const videoUrl = f.videoUrl ? safeUrl(f.videoUrl, '') : '';
+  const embed = videoUrl
+    ? `<div class="reel reel--video">
+         <video src="${esc(videoUrl)}" controls playsinline preload="metadata"
+           ${f.thumbnail?.url ? `poster="${esc(f.thumbnail.url)}"` : ''}
+           aria-label="Huawei ICT interview video"></video>
        </div>`
-    : poster(posterInner);
+    : fallback;
   el.innerHTML = `
     <div class="moment__glow" aria-hidden="true"></div>
     <div class="container">
@@ -170,7 +178,13 @@ export function renderMoment(f) {
     el.style.setProperty('--gx', `${((e.clientX - r.left) / r.width) * 100}%`);
     el.style.setProperty('--gy', `${((e.clientY - r.top) / r.height) * 100}%`);
   });
-  if (!useEmbed) initTilt($('#reel', el));
+  // If the video file is missing or can't play, swap in the Facebook embed / poster
+  const vid = $('.reel--video video', el);
+  vid?.addEventListener('error', () => {
+    vid.closest('.reel--video').outerHTML = fallback;
+    if (!useEmbed) initTilt($('#reel', el));
+  }, { once: true });
+  if (!videoUrl && !useEmbed) initTilt($('#reel', el));
 }
 
 /* ==========================================================================

@@ -9,6 +9,8 @@
 import { getFirebase, isFirebaseConfigured } from '../js/firebase.js';
 import { seed } from '../js/seed-data.js';
 import { CASE_SECTIONS } from '../js/case-sections.js';
+import { initTheme } from '../js/theme.js';
+import { FONT_OPTIONS, FONT_PAIRS } from '../js/fonts.js';
 import { $, $$, esc, sanitizeHTML, slugify, debounce, toast, applyAccent, byOrder } from '../js/utils.js';
 
 /* ==========================================================================
@@ -100,7 +102,7 @@ const SINGLES = {
     groups: [
       ['Visibility', [F('published', 'Show this section', 'toggle')]],
       ['Copy', [F('label', 'Small label'), F('mega', 'Large title', 'text', { max: 24 }), F('title', 'Headline'), F('description', 'Description', 'richtext')]],
-      ['Video', [F('reelUrl', 'Facebook Reel URL', 'url', { required: true }), F('embed', 'Play the video inside the website (Facebook embed)', 'toggle', { help: 'Turn off to show a designed poster that opens Facebook instead.' }), F('posterTitle', 'Poster title'), F('thumbnail', 'Thumbnail', 'image', { help: 'A 9:16 still from the reel works best.' })]]
+      ['Video', [F('videoUrl', 'Video file', 'text', { help: 'Path to the MP4 in the repo, e.g. ./assets/video/huawei-interview.mp4. Plays in the site’s own player. Leave empty to use the Facebook embed.' }), F('reelUrl', 'Facebook Reel URL', 'url', { required: true }), F('embed', 'Play the video inside the website (Facebook embed)', 'toggle', { help: 'Turn off to show a designed poster that opens Facebook instead.' }), F('posterTitle', 'Poster title'), F('thumbnail', 'Thumbnail', 'image', { help: 'A 9:16 still from the reel works best.' })]]
     ]
   },
   settings: {
@@ -110,7 +112,8 @@ const SINGLES = {
       ['Identity', [ROW(F('name', 'Name'), F('email', 'Contact email', 'text')), F('role', 'Role line'), ROW(F('location', 'Location'), F('resumeUrl', 'Résumé URL', 'url'))]],
       ['SEO', [F('seoTitle', 'SEO title', 'text', { max: 70 }), F('seoDescription', 'SEO description', 'textarea', { max: 170 }), F('favicon', 'Favicon', 'image', { help: 'Square PNG or SVG, at least 64×64.' })]],
       ['Page copy', [F('aboutStatement', 'About statement', 'textarea'), F('contactHeadline', 'Contact headline'), F('contactLede', 'Contact intro', 'textarea'), F('footerText', 'Footer statement')]],
-      ['Theme', [ROW(F('accentColor', 'Accent colour', 'color', { help: 'Check contrast against #161618 (aim for 4.5:1 or more).' }), F('showGrain', 'Film grain texture', 'toggle')), F('showLoader', 'Intro loader on first visit', 'toggle')]]
+      ['Typography', [F('fontPair', 'Font pair', 'select', { options: FONT_OPTIONS, preview: previewFont, help: 'Applies to the whole site after you save. Preview without saving: add ?font=editorial (or any key) to the site URL.' })]],
+      ['Theme', [ROW(F('accentColor', 'Accent colour', 'color', { help: 'The site automatically deepens or lightens it per theme so text stays readable (4.5:1).' }), F('showGrain', 'Film grain texture', 'toggle')), F('showLoader', 'Intro loader on first visit', 'toggle')]]
     ]
   }
 };
@@ -223,6 +226,17 @@ function collectImagePaths(doc) {
   return out;
 }
 
+/** Live sample of a font pair inside the admin */
+function previewFont(key, box) {
+  const p = FONT_PAIRS[key] || FONT_PAIRS.geist;
+  const id = `fp-${key}`;
+  if (!document.getElementById(id)) {
+    document.head.append(Object.assign(document.createElement('link'), { id, rel: 'stylesheet', href: `https://fonts.googleapis.com/css2?${p.url}&display=swap` }));
+  }
+  box.innerHTML = `<p style="font-family:${esc(p.display)};font-weight:${p.weight};letter-spacing:${p.tracking};font-size:30px;line-height:1.1">Designing digital experiences</p>
+    <p style="font-family:${esc(p.body)};font-size:15px;color:var(--c-ink-2);margin-top:8px">I bring research, visual design and interaction design together to build products that are intuitive and accessible.</p>`;
+}
+
 /* ==========================================================================
    Field widgets: each returns { name, el, get(), set?() }
    ========================================================================== */
@@ -264,9 +278,17 @@ function selectWidget(f, value) {
   const id = nextId();
   const s = el('select', 'f__input');
   s.id = id;
-  s.innerHTML = f.options.map((o) => `<option value="${esc(o)}">${esc(o)}</option>`).join('');
-  s.value = value || f.options[0];
-  return { name: f.name, el: wrap(f, s, id), get: () => s.value };
+  const opts = f.options.map((o) => (Array.isArray(o) ? o : [o, o]));
+  s.innerHTML = opts.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('');
+  s.value = value || opts[0][0];
+  const w = wrap(f, s, id);
+  if (f.preview) {
+    const prev = el('div', 'font-preview');
+    const paint = () => f.preview(s.value, prev);
+    s.addEventListener('change', paint); paint();
+    w.insertBefore(prev, $('.f__error', w));
+  }
+  return { name: f.name, el: w, get: () => s.value };
 }
 
 function toggleWidget(f, value) {
@@ -1000,4 +1022,5 @@ async function start() {
   addEventListener('hashchange', () => { if (S.user) route(); });
 }
 
+initTheme();
 start();
