@@ -793,7 +793,7 @@ body.no-grain::after { display: none; }
 }
 .reel img { width: 100%; height: 100%; object-fit: cover; }
 .reel-wrap { display: grid; gap: var(--s-3); justify-items: center; }
-.reel-wrap .reel { width: auto; height: min(70vh, 580px); aspect-ratio: 9 / 16; }
+.reel-wrap .reel { width: auto; height: min(70vh, 580px); aspect-ratio: 11 / 16; }
 .reel--embed { background: var(--c-bg-raised); transform: none; box-shadow: var(--shadow-float), 0 0 0 1px var(--c-line-strong); }
 .reel--embed::before { content: "Loading video…"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--c-ink-3); font-size: var(--t-sm); }
 .reel--video { background: #000; transform: none; box-shadow: var(--shadow-float), 0 0 0 1px var(--c-line-strong); }
