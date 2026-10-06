@@ -25,9 +25,11 @@
   transition-delay: var(--delay, 0ms);
 }
 .js [data-reveal="blur"] { filter: blur(10px); transition-property: opacity, transform, filter; }
-.js [data-reveal="mask"] { opacity: 1; transform: none; clip-path: inset(0 0 100% 0); transition: clip-path var(--d-xslow) var(--ease-in-out); }
+/* Clip the children, not the observed element: a zero-area target never intersects */
+.js [data-reveal="mask"] { opacity: 1; transform: none; }
+.js [data-reveal="mask"] > * { clip-path: inset(0 0 100% 0); transition: clip-path var(--d-xslow) var(--ease-in-out); }
 .js [data-reveal].is-in { opacity: 1; transform: none; filter: none; }
-.js [data-reveal="mask"].is-in { clip-path: inset(0 0 0 0); }
+.js [data-reveal="mask"].is-in > * { clip-path: inset(0 0 0 0); }
 
 /* ---------- Split headline (word-level, preserves wrapping & a11y) ---------- */
 .split-line { display: inline; }
@@ -65,7 +67,7 @@
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; transition-delay: 0ms !important; }
   .js [data-reveal], .js [data-reveal="blur"] { opacity: 1; transform: none; filter: none; }
-  .js [data-reveal="mask"] { clip-path: none; }
+  .js [data-reveal="mask"] > * { clip-path: none; }
   .split-word > span { transform: none; }
   .hero__scroll::after, .reel__play::before, .moment__label::before { animation: none; }
   .moment__mega .ch { transform: none; opacity: 1; }

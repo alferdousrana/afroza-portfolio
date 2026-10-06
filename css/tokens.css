@@ -24,7 +24,7 @@
   --c-danger: #ff8a7a;
 
   /* ---------- Typography ---------- */
-  --f-display: "Bricolage Grotesque", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-display: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --f-body: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   /* Modular scale (1.25 base, fluid at display sizes) */
@@ -35,9 +35,9 @@
   --t-lg: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
   --t-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
   --t-2xl: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
-  --t-3xl: clamp(2.5rem, 1.5rem + 4.4vw, 5.5rem);
-  --t-hero: clamp(2.6rem, 1.4rem + 4.9vw, 6.25rem);
-  --t-mega: clamp(4rem, 1rem + 15vw, 17rem);
+  --t-3xl: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem);
+  --t-hero: clamp(2.5rem, 1.4rem + 4.4vw, 5.75rem);
+  --t-mega: clamp(3.5rem, 1rem + 12vw, 13rem);
 
   --lh-tight: 0.95;
   --lh-snug: 1.15;
@@ -56,7 +56,7 @@
   --s-8: 4rem;
   --s-9: 6rem;
   --s-10: 8rem;
-  --section-y: clamp(5rem, 3rem + 8vw, 10rem);
+  --section-y: clamp(3.5rem, 2.25rem + 4.5vw, 6.5rem);
   --gutter: clamp(1.25rem, 0.8rem + 2vw, 2.5rem);
 
   /* ---------- Layout ---------- */

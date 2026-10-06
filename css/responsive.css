@@ -103,6 +103,9 @@
 
   /* About */
   .about__statement { margin-left: 0; max-width: none; }
+  .about__intro.has-portrait { grid-template-columns: 1fr; gap: var(--s-6); }
+  .about__intro.has-portrait .about__statement { max-width: none; }
+  .portrait { max-width: 300px; }
   .layers { grid-template-columns: 1fr; min-height: 0; }
   .layers__panel { border-right: 0; border-bottom: 1px solid var(--c-line); padding: var(--s-3); }
   .layers__title { display: none; }
@@ -154,7 +157,7 @@
 
   /* Moment */
   .moment__grid { grid-template-columns: 1fr; }
-  .reel { max-width: 320px; }
+  .reel-wrap { max-width: 340px; margin-inline: auto; width: 100%; }
   .moment__mega { font-size: clamp(3.4rem, 1rem + 15vw, 8rem); white-space: normal; flex-wrap: wrap; }
 
   /* Experience */

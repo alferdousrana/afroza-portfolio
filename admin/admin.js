@@ -100,7 +100,7 @@ const SINGLES = {
     groups: [
       ['Visibility', [F('published', 'Show this section', 'toggle')]],
       ['Copy', [F('label', 'Small label'), F('mega', 'Large title', 'text', { max: 24 }), F('title', 'Headline'), F('description', 'Description', 'richtext')]],
-      ['Video', [F('reelUrl', 'Facebook Reel URL', 'url', { required: true }), F('posterTitle', 'Poster title'), F('thumbnail', 'Thumbnail', 'image', { help: 'A 9:16 still from the reel works best.' })]]
+      ['Video', [F('reelUrl', 'Facebook Reel URL', 'url', { required: true }), F('embed', 'Play the video inside the website (Facebook embed)', 'toggle', { help: 'Turn off to show a designed poster that opens Facebook instead.' }), F('posterTitle', 'Poster title'), F('thumbnail', 'Thumbnail', 'image', { help: 'A 9:16 still from the reel works best.' })]]
     ]
   },
   settings: {

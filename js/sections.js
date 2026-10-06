@@ -114,9 +114,27 @@ export function renderMoment(f) {
   const mega = (f.mega || 'HUAWEI ICT').split('').map((c) =>
     c === ' ' ? '<span class="sp"></span>' : `<span class="ch">${esc(c)}</span>`).join('');
   const url = safeUrl(f.reelUrl);
+  // Facebook's official video plugin plays public reels inside the page
+  const embedSrc = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&width=380&height=676&t=0`;
+  const poster = (inner) => `<a class="reel" id="reel" href="${esc(url)}" target="_blank" rel="noopener" data-cursor="Play" data-cursor-size="lg" aria-label="Watch the Huawei ICT interview reel on Facebook (opens in a new tab)">${inner}</a>`;
   const thumb = f.thumbnail?.url
     ? `<img src="${esc(f.thumbnail.url)}" alt="${esc(f.thumbnail.alt || 'Interview still')}" loading="lazy" decoding="async">`
     : '';
+  const useEmbed = f.embed !== false;
+  const posterInner = `${thumb}
+          <span class="reel__shade" aria-hidden="true"></span>
+          <span class="reel__poster" aria-hidden="true">
+            <span class="reel__poster-top"><span>Facebook Reel</span><span>Interview</span></span>
+            <span class="reel__poster-title">${esc(f.posterTitle || 'Interview feature')}</span>
+          </span>
+          <span class="reel__play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>`;
+  const embed = useEmbed
+    ? `<div class="reel reel--embed">
+         <iframe src="${esc(embedSrc)}" title="Huawei ICT interview reel (Facebook video)" loading="lazy"
+           allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen
+           referrerpolicy="strict-origin-when-cross-origin"></iframe>
+       </div>`
+    : poster(posterInner);
   el.innerHTML = `
     <div class="moment__glow" aria-hidden="true"></div>
     <div class="container">
@@ -130,15 +148,10 @@ export function renderMoment(f) {
             <a class="btn btn--accent btn--lg magnetic" href="${esc(url)}" target="_blank" rel="noopener" data-cursor="Open">Watch the interview</a>
           </div>
         </div>
-        <a class="reel" id="reel" href="${esc(url)}" target="_blank" rel="noopener" data-cursor="Play" data-cursor-size="lg" aria-label="Watch the Huawei ICT interview reel on Facebook (opens in a new tab)" data-reveal="mask">
-          ${thumb}
-          <span class="reel__shade" aria-hidden="true"></span>
-          <span class="reel__poster" aria-hidden="true">
-            <span class="reel__poster-top"><span>Facebook Reel</span><span>Interview</span></span>
-            <span class="reel__poster-title">${esc(f.posterTitle || 'Interview feature')}</span>
-          </span>
-          <span class="reel__play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>
-        </a>
+        <div class="reel-wrap" data-reveal="mask">
+          ${embed}
+          <a class="reel-link" href="${esc(url)}" target="_blank" rel="noopener" data-cursor="Open">Open on Facebook</a>
+        </div>
       </div>
     </div>`;
 
@@ -157,7 +170,7 @@ export function renderMoment(f) {
     el.style.setProperty('--gx', `${((e.clientX - r.left) / r.width) * 100}%`);
     el.style.setProperty('--gy', `${((e.clientY - r.top) / r.height) * 100}%`);
   });
-  initTilt($('#reel', el));
+  if (!useEmbed) initTilt($('#reel', el));
 }
 
 /* ==========================================================================

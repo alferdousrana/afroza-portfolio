@@ -138,10 +138,19 @@ function applySettings(s) {
 }
 
 function renderPortrait(hero) {
-  const fig = $('#portrait');
+  const fig = $('#portrait'), intro = $('#aboutIntro');
   if (!fig || !hero?.profileImage?.url) return;
-  fig.innerHTML = `<img src="${esc(hero.profileImage.url)}" alt="${esc(hero.profileImage.alt || 'Portrait of Afroza Riju')}" loading="lazy" decoding="async">`;
-  fig.hidden = false;
+  const img = new Image();
+  img.alt = hero.profileImage.alt || 'Portrait of Afroza Riju';
+  img.decoding = 'async';
+  // Only reveal the frame once the photo really loads: a missing file never leaves a hole
+  img.onload = () => {
+    $('.portrait__frame', fig).append(img);
+    $('.portrait__caption', fig).textContent = `W ${img.naturalWidth}  H ${img.naturalHeight}`;
+    fig.hidden = false;
+    intro.classList.add('has-portrait');
+  };
+  img.src = hero.profileImage.url;
 }
 
 /* ==========================================================================

@@ -34,7 +34,7 @@ export const seed = {
     ctaPrimaryLabel: 'See selected work',
     ctaPrimaryHref: '#work',
     ctaSecondaryLabel: 'Start a conversation',
-    profileImage: null,
+    profileImage: { url: './assets/images/afroza.jpg', alt: 'Portrait of Afroza Riju' },
     noteText: 'Users hesitate at step 3.'
   },
 
@@ -201,6 +201,7 @@ export const seed = {
 
   featured: {
     published: true,
+    embed: true,
     label: 'Featured moment',
     mega: 'HUAWEI ICT',
     title: 'Press Interviewer at the Huawei ICT Startup Competition',

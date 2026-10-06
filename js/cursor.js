@@ -43,6 +43,7 @@ export function initCursor() {
   }, { passive: true });
 
   document.addEventListener('pointerover', (e) => {
+    if (e.target.tagName === 'IFRAME') { setState(null); root.classList.add('is-hidden'); return; }
     const t = e.target.closest('[data-cursor], [data-frame], a, button, input, textarea, [role="tab"]');
     if (!t) return setState(null);
     if (t.matches('input:not([type="radio"]), textarea')) return setState('is-text');
