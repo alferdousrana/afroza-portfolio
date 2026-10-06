@@ -159,6 +159,7 @@
   /* Moment */
   .moment__grid { grid-template-columns: 1fr; }
   .reel-wrap { max-width: 340px; margin-inline: auto; width: 100%; }
+  .reel-wrap .reel { width: 100%; height: auto; }
   .moment__mega { font-size: clamp(3.4rem, 1rem + 15vw, 8rem); white-space: normal; flex-wrap: wrap; }
 
   /* Experience */

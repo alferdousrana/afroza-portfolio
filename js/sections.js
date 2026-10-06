@@ -115,7 +115,7 @@ export function renderMoment(f) {
     c === ' ' ? '<span class="sp"></span>' : `<span class="ch">${esc(c)}</span>`).join('');
   const url = safeUrl(f.reelUrl);
   // Facebook's official video plugin plays public reels inside the page
-  const embedSrc = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&width=380&height=676&t=0`;
+  const embedSrc = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&width=326&height=580&t=0`;
   const poster = (inner) => `<a class="reel" id="reel" href="${esc(url)}" target="_blank" rel="noopener" data-cursor="Play" data-cursor-size="lg" aria-label="Watch the Huawei ICT interview reel on Facebook (opens in a new tab)">${inner}</a>`;
   const thumb = f.thumbnail?.url
     ? `<img src="${esc(f.thumbnail.url)}" alt="${esc(f.thumbnail.alt || 'Interview still')}" loading="lazy" decoding="async">`
