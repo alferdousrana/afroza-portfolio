@@ -8,12 +8,12 @@
  * Until you do, the site runs on the default content in seed-data.js.
  */
 export const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId: 'YOUR_APP_ID'
+  apiKey: "AIzaSyALmGoKu942To5aTIUvtB1jNA4q39KKP_g",
+  authDomain: "afroza-portfolio.firebaseapp.com",
+  projectId: "afroza-portfolio",
+  storageBucket: "afroza-portfolio.firebasestorage.app",
+  messagingSenderId: "98995344047",
+  appId: "1:98995344047:web:d02d9286f23b3a2cf07a5a",
 };
 
 export const isFirebaseConfigured = () =>
