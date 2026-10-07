@@ -6,7 +6,7 @@
  *  - Firebase, admin and other origins: always network (never cached)
  * Bump VERSION whenever you deploy changes to cached files.
  */
-const VERSION = 'ar-v2.0.0';
+const VERSION = 'ar-v2.0.1';
 const CORE = `${VERSION}-core`;
 const RUNTIME = `${VERSION}-runtime`;
 const FONTS = 'ar-fonts-v1';
