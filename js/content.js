@@ -10,11 +10,13 @@ import { getFirebase, isFirebaseConfigured } from './firebase.js';
 import { seed } from './seed-data.js';
 import { withTimeout, byOrder } from './utils.js';
 
-const CACHE_KEY = 'ar-content-v1';
+const CACHE_KEY = 'ar-content-v2';
 
 export const COLLECTIONS = {
   settings: ['siteSettings', 'main'],
   hero: ['heroContent', 'main'],
+  page: ['pageContent', 'main'],
+  gallery: 'gallery',
   featured: ['featured', 'huawei'],
   projects: 'projects',
   experience: 'experience',
@@ -41,22 +43,34 @@ async function fetchAll() {
       .sort(byOrder);
   };
 
-  const [settings, hero, featured, projects, experience, achievements, skills, social, process, techflow] = await Promise.all([
+  // v2 content is optional: if its rules aren't deployed yet, the rest still loads
+  const soft = (p, fallback) => p.catch((err) => { console.warn('[content] optional read failed:', err.code || err.message); return fallback; });
+
+  const [settings, hero, featured, projects, experience, achievements, skills, social, process, techflow, page, gallery] = await Promise.all([
     one(COLLECTIONS.settings), one(COLLECTIONS.hero), one(COLLECTIONS.featured),
     many(COLLECTIONS.projects, true), many(COLLECTIONS.experience), many(COLLECTIONS.achievements),
-    many(COLLECTIONS.skills), many(COLLECTIONS.social), many(COLLECTIONS.process), many(COLLECTIONS.techflow)
+    many(COLLECTIONS.skills), many(COLLECTIONS.social), many(COLLECTIONS.process), many(COLLECTIONS.techflow),
+    soft(one(COLLECTIONS.page), null), soft(many(COLLECTIONS.gallery, true), null)
   ]);
 
   return {
     // Singletons fall back field-by-field to defaults so identity never goes blank
     settings: { ...seed.settings, ...(settings || {}) },
     hero: { ...seed.hero, ...(hero || {}) },
+    page: { ...seed.page, ...(page || {}) },
     featured: featured ? { ...seed.featured, ...featured } : seed.featured,
     projects, experience, achievements, skills, social,
     // Methodology content falls back to defaults if never customised
     process: process.length ? process : seed.process,
-    techflow: techflow.length ? techflow : seed.techflow
+    techflow: techflow.length ? techflow : seed.techflow,
+    // Gallery shows the default set until the first image is added in Studio
+    gallery: gallery?.length ? gallery : seed.gallery
   };
+}
+
+/** Last good content, read synchronously (lets the loader show the right words instantly). */
+export function peekCachedContent() {
+  try { return JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (e) { return null; }
 }
 
 export async function loadContent() {
@@ -69,7 +83,7 @@ export async function loadContent() {
     console.warn('[content] Firestore unavailable, using fallback:', err.message);
     try {
       const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-      if (cached) return { ...cached, source: 'cache' };
+      if (cached) return { ...structuredClone(seed), ...cached, page: { ...seed.page, ...(cached.page || {}) }, source: 'cache' };
     } catch (e) { /* ignore */ }
     return { ...structuredClone(seed), source: 'default' };
   }

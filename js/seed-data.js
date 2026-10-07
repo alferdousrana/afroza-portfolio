@@ -9,6 +9,25 @@
 
 const BEHANCE = 'https://www.behance.net/afrozariju';
 
+/**
+ * Every section on the home page, in default order (v2).
+ * The hero always comes first and the footer always last; everything in
+ * between can be reordered and hidden from Studio → Sections & menu.
+ */
+export const SECTIONS = [
+  ['marquee', 'Moving ticker'],
+  ['about', 'About and capabilities'],
+  ['live', 'Right now (live status)'],
+  ['process', 'How I think'],
+  ['work', 'Selected work'],
+  ['moment', 'Featured moment (Huawei)'],
+  ['gallery', 'Gallery'],
+  ['experience', 'Experience'],
+  ['tech', 'Design meets technology'],
+  ['achievements', 'Milestones'],
+  ['contact', 'Contact']
+];
+
 export const seed = {
   settings: {
     name: 'Afroza Riju',
@@ -23,9 +42,95 @@ export const seed = {
     contactLede: "Tell me about the product, the people using it, and where it's getting stuck. I reply to every message.",
     footerText: 'Designed with curiosity. Built with intention.',
     accentColor: '#7b93ff',
+    // v2: colours per theme. Empty = use the preset's colour.
+    palettePreset: 'original',
+    darkBg: '', darkInk: '', darkAccent: '', darkWarm: '',
+    lightBg: '', lightInk: '', lightAccent: '', lightWarm: '',
+    // v2: typography
     fontPair: 'geist',
+    customDisplayFont: '', customBodyFont: '', customDisplayWeight: 500,
+    typeScale: 1,
+    bodyScale: 1,
+    // v2: "Let's talk" button
+    ctaLabel: "Let's talk",
+    ctaHref: '#contact',
+    ctaStyle: 'live',
     showGrain: true,
     showLoader: true
+  },
+
+  /* v2: every heading, label and list on the home page */
+  page: {
+    sections: SECTIONS.map(([id]) => ({ id, visible: true })),
+    nav: [
+      { label: 'About', target: 'about' },
+      { label: 'Work', target: 'work' },
+      { label: 'Gallery', target: 'gallery' },
+      { label: 'Experience', target: 'experience' },
+      { label: 'Milestones', target: 'achievements' },
+      { label: 'Contact', target: 'contact' }
+    ],
+    tabHome: 'Home', tabAbout: 'About', tabWork: 'Work', tabCareer: 'Career', tabContact: 'Contact',
+
+    aboutTitle: "I don't just design interfaces. I design how they feel to use.",
+    facts: [
+      { label: 'Experience', value: '3+ years in research-informed product design' },
+      { label: 'Education', value: 'B.Sc. Computer Science & Engineering, Green University of Bangladesh. Graduate' },
+      { label: 'Based in', value: 'Dhaka, Bangladesh' },
+      { label: 'Open to', value: 'Full-time roles and freelance projects' }
+    ],
+    capabilitiesTitle: 'Capabilities',
+
+    processTitle: 'How I think',
+    processLede: 'Six stages, never strictly linear. Select one to see what happens there, what comes out of it, and how I approach it.',
+    workTitle: 'Selected work',
+    workMoreLabel: 'See everything on Behance',
+    galleryTitle: 'Gallery',
+    galleryLede: 'Work, events and the moments in between. Select any image to see it larger.',
+    expTitle: "Where I've worked",
+    expLede: 'Select a company, or a bar on the timeline, to see the role and what I contributed.',
+    techTitle: 'Design meets technology',
+    techLede: 'My computer science degree means I can follow a design all the way into code: talk constraints with engineers, spec states properly, and keep what ships close to what was designed.',
+    achTitle: 'Milestones',
+    achLede: 'Programs, competitions and leadership that shaped how I work.',
+
+    liveTitle: 'Right now',
+    liveLede: 'What I am working on and whether I can take something new. This panel updates itself.',
+    liveAvailable: true,
+    liveStatus: 'Open to full-time roles and freelance projects',
+    liveCity: 'Dhaka',
+    liveTimezone: 'Asia/Dhaka',
+    liveNow: [
+      'Working as a UI/UX Designer Trainee at Mediusware',
+      'Auditing interfaces against WCAG',
+      'Applying the Laws of UX to everyday screens',
+      'Turning research notes into flows in Figma'
+    ],
+    stats: [
+      { value: '3', suffix: '+', label: 'Years in product design' },
+      { value: 'auto:projects', suffix: '', label: 'Case studies on this site' },
+      { value: 'auto:companies', suffix: '', label: 'Companies worked with' },
+      { value: 'auto:milestones', suffix: '', label: 'Programs and milestones' }
+    ],
+
+    marqueeItems: ['User research', 'Usability testing', 'Design systems', 'Accessibility', 'Interaction design', 'Prototyping', 'UX audits'],
+    marqueeItems2: ['Figma', 'Personas', 'Journey maps', 'Wireframes', 'High-fidelity UI', 'Developer handoff', 'HCI research'],
+    marqueeSpeed: 1,
+
+    contactLegend: 'What is this about?',
+    contactTopics: ['Full-time role', 'Freelance project', 'UX research', 'Something else'],
+    contactSubmit: 'Send message',
+
+    loaderSteps: ['Research', 'Define', 'Design', 'Test', 'Refine'],
+    heroHint: "Drag the frames. They're yours to rearrange.",
+    heroScroll: 'Scroll',
+    framePhone: 'Home / Mobile',
+    framePhoneCta: 'Continue',
+    frameComponent: 'Button / States',
+    frameNoteMeta: 'Usability test, insight',
+    frameContrast: 'WCAG AA passed',
+    framePersonaTitle: 'Persona',
+    framePersonaText: 'First-time user'
   },
 
   hero: {
@@ -198,6 +303,17 @@ export const seed = {
     { id: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/afrozariju19/', icon: 'linkedin', order: 1 },
     { id: 'dribbble', label: 'Dribbble', url: 'http://dribbble.com/afroza_riju', icon: 'dribbble', order: 2 },
     { id: 'facebook', label: 'Facebook', url: 'https://www.facebook.com/afroza.riju', icon: 'facebook', order: 3 }
+  ],
+
+  /* v2: gallery. Starts with real work covers; replace or add photos from Studio → Gallery. */
+  gallery: [
+    { id: 'g-portrait', title: 'Afroza Riju', caption: 'Portrait', category: 'People', year: '', size: 'tall', image: { url: './assets/images/afroza.jpg', alt: 'Portrait of Afroza Riju' }, link: '', published: true, order: 0 },
+    { id: 'g-grocery', title: 'AI Grocery List Parser', caption: 'UX case study', category: 'Work', year: '', size: 'large', image: { url: 'https://mir-s3-cdn-cf.behance.net/projects/404/94f305247422857.Y3JvcCw1MzEzLDQxNTYsMjIzLDA.png', alt: 'AI Grocery List Parser case study cover' }, link: 'https://www.behance.net/gallery/247422857/AI-Grocery-List-Parser-UX-Case-Study', published: true, order: 1 },
+    { id: 'g-fauget', title: 'FAUGET', caption: 'Fitness dashboard', category: 'Work', year: '', size: 'normal', image: { url: 'https://mir-s3-cdn-cf.behance.net/projects/404/7dff01239215165.Y3JvcCwyODgwLDIyNTIsMCww.png', alt: 'FAUGET fitness dashboard cover' }, link: 'https://www.behance.net/gallery/239215165/FAUGET-Fitness-Dashboard-UX-Case-Study', published: true, order: 2 },
+    { id: 'g-movie', title: 'R-Movie Booking', caption: 'Cinematic app experience', category: 'Work', year: '', size: 'normal', image: { url: 'https://mir-s3-cdn-cf.behance.net/projects/404/02a582238737169.Y3JvcCwyNDMyLDE5MDIsMjQ2LDA.png', alt: 'R-Movie Booking app cover' }, link: 'https://www.behance.net/gallery/238737169/R-Movie-Booking-A-Cinematic-App-Experience', published: true, order: 3 },
+    { id: 'g-wallet', title: 'Wallet', caption: 'Finance and money transfer app', category: 'Work', year: '', size: 'wide', image: { url: 'https://mir-s3-cdn-cf.behance.net/projects/404/f2ed41236385469.Y3JvcCwyNzAyLDIxMTQsODYsMA.png', alt: 'Wallet finance app cover' }, link: 'https://www.behance.net/gallery/236385469/Wallet-Modern-Finance-Money-Transfer-App-UIUX', published: true, order: 4 },
+    { id: 'g-frozehna', title: 'Frozehna', caption: 'Real estate app and website', category: 'Work', year: '', size: 'normal', image: { url: 'https://mir-s3-cdn-cf.behance.net/projects/404/7ea1f6235660677.Y3JvcCwyMDcxLDE2MjAsMTAyLDA.png', alt: 'Frozehna real estate cover' }, link: 'https://www.behance.net/gallery/235660677/Real-Estate-Mobile-App-Website-Solution-Frozehna', published: true, order: 5 },
+    { id: 'g-aero', title: 'AeroAssist', caption: 'Airport help and assistance (team project)', category: 'Work', year: '', size: 'normal', image: { url: 'https://mir-s3-cdn-cf.behance.net/projects/404/6c79c4233749355.Y3JvcCwzMjMyLDI1MjgsMCww.png', alt: 'AeroAssist case study cover' }, link: 'https://www.behance.net/gallery/233749355/AeroAssist-Airport-Help-Assistance-Case-Study', published: true, order: 6 }
   ],
 
   featured: {

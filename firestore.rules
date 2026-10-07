@@ -31,6 +31,13 @@ service cloud.firestore {
     match /heroContent/{id} { allow read: if true; allow write: if isAdmin(); }
     match /featured/{id} { allow read: if true; allow write: if isAdmin(); }
 
+    // v2: page content (headings, menus, sections, live panel) and the gallery
+    match /pageContent/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /gallery/{id} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
     // Contact form: anyone can create a well-formed message; only admins can read or manage them.
     match /contactMessages/{id} {
       allow create: if request.resource.data.keys().hasOnly(['name', 'email', 'projectType', 'message', 'read', 'createdAt'])

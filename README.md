@@ -1,8 +1,50 @@
-# Afroza Riju — Portfolio
+# Afroza Riju — Portfolio · v2.0.0
 
 Portfolio for **Afroza Riju**, Product Designer (UI/UX) and UX & HCI Researcher.
 Static HTML, CSS and vanilla JavaScript (ES modules), with Firebase as the content backend and a built-in admin ("Studio").
 It needs no build step, so it runs on GitHub Pages, Vercel or any static host.
+
+---
+
+## What's new in v2.0.0
+
+| Area | What changed |
+|---|---|
+| **Gallery** | New section with mixed tile sizes (normal, wide, tall, large), category filters, scroll parallax and a lightbox (grows out of the tile; swipe sideways to browse, swipe down to close; arrow keys and Esc work). Managed in **Studio → Gallery**, including **Upload many images**. |
+| **Let's talk button** | Looping animation: a light travels round the border, the availability dot pulses and the label rolls over. Label, link and animation style (Live, Ring, Pulse, Shine, Roll, None) are in **Studio → Colours & fonts**. |
+| **Colours & fonts** | Six palettes or your own colours: background, text, accent and button colour for each theme. All other shades are derived automatically and text is kept at 4.5:1 contrast or better. 12 font pairs or any Google Font, plus heading and body text size sliders. Studio previews changes live before you save. |
+| **Everything editable** | Section order and visibility, top menu, mobile tab labels, every section heading and intro, About facts, contact form topics and button, loader steps and hero canvas text. |
+| **Live sections** | A moving ticker that speeds up as you scroll, and a **Right now** panel with a ticking local clock, a day line, a typewriter of current work, and counters that count up (they can count projects, companies, milestones and years automatically). |
+| **Mobile motion** | Eased, interruptible smooth scrolling for every in-page link. Sections rise and settle as they scroll in and recede as they leave. The top bar and tab bar tuck away while you read down and return when you scroll up. Android tab taps give a small haptic tick. Everything is off for reduced motion. |
+| **Content** | Education no longer shows a CGPA; it reads "Graduate". |
+
+### Upgrading a live v1 site to v2
+1. **Deploy the new rules** (they add `pageContent` and `gallery`):
+   ```bash
+   firebase deploy --only firestore:rules
+   ```
+   or paste `firestore.rules` into Firestore → Rules → Publish. Storage rules are unchanged.
+2. Push the code (GitHub Pages / Vercel). The service worker is now `ar-v2.0.0`, so returning visitors get "A new version is ready".
+3. Open **Studio → Overview** and select **Add v2 content**. This creates the editable page content and the starter gallery. It never overwrites projects, settings or messages, and it is safe to run more than once.
+4. Replace the starter gallery (it uses your Behance covers and portrait) with your own photos in **Studio → Gallery**.
+
+If step 1 is skipped the site still works: v2 content falls back to the defaults in `js/seed-data.js`. Saving v2 pages in Studio needs the new rules.
+
+### New Studio pages
+- **Portfolio → Gallery:** images, captions, categories, tile size, show or hide, drag to reorder.
+- **Design → Colours & fonts:** palette, 8 colours, fonts, text size, Let's talk button.
+- **Design → Sections & menu:** section order and visibility, menu links, tab bar labels.
+- **Page → About & facts / Live & ticker / Section headings / Contact form / Loader & canvas:** every remaining piece of text.
+
+### New files
+`css/v2.css` (styles for all of the above) · `js/palette.js` (colour engine) · `js/live.js` (button, ticker, Right now) · `js/gallery.js` · `js/motion.js` (smooth scroll + mobile motion). `js/fonts.js` was extended.
+
+### New Firestore data
+| Collection / doc | Contents |
+|---|---|
+| `pageContent/main` | sections[{id, visible}], nav[{label, target}], tab labels, every heading/intro, facts[{label, value}], live panel fields, stats[{value, suffix, label}], marquee rows and speed, contact topics, loader steps, hero canvas text |
+| `gallery/{id}` | image{url, path, alt}, title, caption, category, year, size, link, published, order |
+| `siteSettings/main` (new fields) | palettePreset, darkBg/Ink/Accent/Warm, lightBg/Ink/Accent/Warm, fontPair, customDisplayFont, customBodyFont, customDisplayWeight, typeScale, bodyScale, ctaLabel, ctaHref, ctaStyle |
 
 ---
 

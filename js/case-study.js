@@ -2,7 +2,9 @@
  * Case-study page: ./case-study.html?p=<slug>
  * Renders only the sections that have content, in a fixed narrative order.
  */
-import { $, $$, esc, safeUrl, richOrPlain, motionOK, applyAccent } from './utils.js';
+import { $, $$, esc, safeUrl, richOrPlain, motionOK } from './utils.js';
+import { applyThemeSettings } from './palette.js';
+import { initCTA } from './live.js';
 import { loadContent } from './content.js';
 import { initCursor } from './cursor.js';
 import { initTheme } from './theme.js';
@@ -138,8 +140,10 @@ async function boot() {
   const curtain = $('#curtain');
   const slug = new URLSearchParams(location.search).get('p');
   const content = await loadContent();
-  if (content.settings?.accentColor) applyAccent(content.settings.accentColor);
-  applyFontPair(content.settings?.fontPair || 'geist');
+  const st = content.settings || {};
+  applyThemeSettings(st);
+  initCTA(st);
+  applyFontPair(st.fontPair || 'geist', { custom: { display: st.customDisplayFont, body: st.customBodyFont, weight: st.customDisplayWeight } });
   const list = content.projects || [];
   const i = list.findIndex((p) => (p.slug || p.id) === slug);
   if (i < 0) renderMissing();

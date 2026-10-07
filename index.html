@@ -37,12 +37,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap">
-  <script>try{var f=JSON.parse(localStorage.getItem('ar-font')||'null');if(f&&f.href){var l=document.createElement('link');l.id='font-pair';l.rel='stylesheet';l.href=f.href;document.head.appendChild(l);var s=document.documentElement.style;s.setProperty('--f-display',f.display);s.setProperty('--f-body',f.body);s.setProperty('--fw-display',f.weight);s.setProperty('--ls-display',f.tracking);}}catch(e){}</script>
+  <script>try{var f=JSON.parse(localStorage.getItem('ar-font')||'null');if(f&&f.href){[f.href,f.href2].forEach(function(h,i){if(!h)return;var l=document.createElement('link');l.id=i?'font-pair-2':'font-pair';l.rel='stylesheet';l.href=h;document.head.appendChild(l);});var s=document.documentElement.style;s.setProperty('--f-display',f.display);s.setProperty('--f-body',f.body);s.setProperty('--fw-display',f.weight);s.setProperty('--ls-display',f.tracking);}}catch(e){}</script>
 
   <link rel="stylesheet" href="./css/tokens.css">
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/animations.css">
   <link rel="stylesheet" href="./css/responsive.css">
+  <link rel="stylesheet" href="./css/v2.css">
+  <!-- Colours chosen in Studio, applied before first paint -->
+  <script>try{var c=localStorage.getItem('ar-theme-css');if(c){var s=document.createElement('style');s.id='ar-theme-css';s.textContent=c;document.head.appendChild(s);}}catch(e){}</script>
 
   <script type="application/ld+json">
   {
@@ -120,11 +123,12 @@
         </svg>
         <span class="nav__brand-text">Afroza Riju</span>
       </a>
-      <nav class="nav__links" aria-label="Primary">
+      <nav class="nav__links" id="navLinks" aria-label="Primary">
         <a href="#about" data-section="about">About</a>
         <a href="#work" data-section="work">Work</a>
+        <a href="#gallery" data-section="gallery">Gallery</a>
         <a href="#experience" data-section="experience">Experience</a>
-        <a href="#achievements" data-section="achievements">Achievements</a>
+        <a href="#achievements" data-section="achievements">Milestones</a>
         <a href="#contact" data-section="contact">Contact</a>
       </nav>
       <div class="nav__actions">
@@ -136,18 +140,24 @@
           <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
           <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         </button>
-        <a class="btn btn--warm btn--sm magnetic" href="#contact" data-cursor="Let's talk">Let's talk</a>
+        <a class="cta-live magnetic" id="ctaLive" href="#contact" data-cursor="Let's talk" data-cta-style="live">
+          <span class="cta-live__ring" aria-hidden="true"></span>
+          <span class="cta-live__fill" aria-hidden="true"></span>
+          <span class="cta-live__dot" aria-hidden="true"></span>
+          <span class="cta-live__label">Let's talk</span>
+          <svg class="cta-live__arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5"/></svg>
+        </a>
       </div>
     </div>
   </header>
 
   <!-- ============ Mobile tab bar (app-like) ============ -->
   <nav class="tabbar" id="tabbar" aria-label="Sections">
-    <a href="#top" data-section="top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></svg><span>Home</span></a>
-    <a href="#about" data-section="about"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg><span>About</span></a>
-    <a href="#work" data-section="work"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Work</span></a>
-    <a href="#experience" data-section="experience"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5V5h6v2.5"/></svg><span>Career</span></a>
-    <a href="#contact" data-section="contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v11H8l-4 3z"/></svg><span>Contact</span></a>
+    <a href="#top" data-section="top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></svg><span data-bind="page.tabHome">Home</span></a>
+    <a href="#about" data-section="about"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg><span data-bind="page.tabAbout">About</span></a>
+    <a href="#work" data-section="work"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span data-bind="page.tabWork">Work</span></a>
+    <a href="#experience" data-section="experience"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5V5h6v2.5"/></svg><span data-bind="page.tabCareer">Career</span></a>
+    <a href="#contact" data-section="contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v11H8l-4 3z"/></svg><span data-bind="page.tabContact">Contact</span></a>
     <i class="tabbar__indicator" aria-hidden="true"></i>
   </nav>
 
@@ -159,20 +169,20 @@
 
         <!-- Draggable frames: focusable, movable with arrow keys -->
         <div class="frame frame--phone" data-frame data-x="76" data-y="42" tabindex="0" role="group" aria-label="Design frame: mobile screen. Drag, or use arrow keys to move.">
-          <span class="frame__name">Home / Mobile</span>
+          <span class="frame__name" data-bind="page.framePhone">Home / Mobile</span>
           <div class="frame__body">
             <div class="mini-phone">
               <i class="mp-bar"></i>
               <div class="mp-card"><b></b><i></i><i class="short"></i></div>
               <div class="mp-row"><i></i><i></i><i></i></div>
               <div class="mp-list"><i></i><i></i><i></i></div>
-              <div class="mp-cta">Continue</div>
+              <div class="mp-cta" data-bind="page.framePhoneCta">Continue</div>
             </div>
           </div>
         </div>
 
         <div class="frame frame--component" data-frame data-x="62" data-y="76" tabindex="0" role="group" aria-label="Design frame: button component with states. Drag, or use arrow keys to move.">
-          <span class="frame__name">Button / States</span>
+          <span class="frame__name" data-bind="page.frameComponent">Button / States</span>
           <div class="frame__body states">
             <span class="state state--default">Default</span>
             <span class="state state--hover">Hover</span>
@@ -184,21 +194,21 @@
         <div class="frame frame--note" data-frame data-x="90" data-y="70" tabindex="0" role="group" aria-label="Research note. Drag, or use arrow keys to move.">
           <div class="frame__body note">
             <p>Users hesitate at step 3.</p>
-            <p class="note__meta">Usability test, insight</p>
+            <p class="note__meta" data-bind="page.frameNoteMeta">Usability test, insight</p>
           </div>
         </div>
 
         <div class="frame frame--contrast" data-frame data-x="61" data-y="24" tabindex="0" role="group" aria-label="Accessibility check: contrast passes WCAG AA. Drag, or use arrow keys to move.">
           <div class="frame__body contrast">
             <span class="contrast__swatch">Aa</span>
-            <span><b>15.6 : 1</b><br>WCAG AA passed</span>
+            <span><b>15.6 : 1</b><br><span data-bind="page.frameContrast">WCAG AA passed</span></span>
           </div>
         </div>
 
         <div class="frame frame--persona" data-frame data-x="91" data-y="26" tabindex="0" role="group" aria-label="Persona card. Drag, or use arrow keys to move.">
           <div class="frame__body persona">
             <span class="persona__avatar" aria-hidden="true"></span>
-            <span><b>Persona</b><br>First-time user</span>
+            <span><b data-bind="page.framePersonaTitle">Persona</b><br><span data-bind="page.framePersonaText">First-time user</span></span>
           </div>
         </div>
 
@@ -228,16 +238,23 @@
 
       <div class="hero__footer container" aria-hidden="true">
         <span class="hero__coords" id="coords">X 0 &nbsp; Y 0</span>
-        <span class="hero__hint">Drag the frames. They're yours to rearrange.</span>
-        <span class="hero__scroll">Scroll</span>
+        <span class="hero__hint" data-bind="page.heroHint">Drag the frames. They're yours to rearrange.</span>
+        <span class="hero__scroll" data-bind="page.heroScroll">Scroll</span>
       </div>
+    </section>
+
+    <!-- ============ MARQUEE (v2): moving ticker, speeds up with scroll ============ -->
+    <section class="marquee" id="marquee" aria-label="Focus areas" data-spec="Ticker / live">
+      <ul class="visually-hidden" id="marqueeList"></ul>
+      <div class="marquee__row" data-dir="1" aria-hidden="true"><div class="marquee__track"></div></div>
+      <div class="marquee__row marquee__row--alt" data-dir="-1" aria-hidden="true"><div class="marquee__track"></div></div>
     </section>
 
     <!-- ============ ABOUT + CAPABILITIES ============ -->
     <section class="section about" id="about" aria-labelledby="aboutTitle" data-spec="About / 12 col">
       <div class="container">
         <header class="section-head">
-          <h2 class="section-title" id="aboutTitle">I don't just design interfaces. I design how they feel to use.</h2>
+          <h2 class="section-title" id="aboutTitle" data-bind="page.aboutTitle">I don't just design interfaces. I design how they feel to use.</h2>
         </header>
         <div class="about__intro" id="aboutIntro">
           <figure class="portrait" id="portrait" hidden>
@@ -250,14 +267,14 @@
 
         <dl class="facts" id="facts">
           <div class="fact"><dt>Experience</dt><dd>3+ years in research-informed product design</dd></div>
-          <div class="fact"><dt>Education</dt><dd>B.Sc. Computer Science &amp; Engineering, Green University of Bangladesh. CGPA 3.20 / 4.00</dd></div>
+          <div class="fact"><dt>Education</dt><dd>B.Sc. Computer Science &amp; Engineering, Green University of Bangladesh. Graduate</dd></div>
           <div class="fact"><dt>Based in</dt><dd>Dhaka, Bangladesh</dd></div>
           <div class="fact"><dt>Open to</dt><dd>Full-time roles and freelance projects</dd></div>
         </dl>
 
         <div class="layers" id="capabilities" data-spec="Capabilities / layers panel">
           <div class="layers__panel">
-            <p class="layers__title">Capabilities</p>
+            <p class="layers__title" data-bind="page.capabilitiesTitle">Capabilities</p>
             <div class="layers__list" role="tablist" aria-label="Skill categories" id="layersList"></div>
           </div>
           <div class="layers__stage" id="layersStage" aria-live="polite"></div>
@@ -265,12 +282,24 @@
       </div>
     </section>
 
+    <!-- ============ RIGHT NOW (v2): live status panel ============ -->
+    <section class="section live" id="live" aria-labelledby="liveTitle" data-spec="Right now / live">
+      <div class="live__aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="container">
+        <header class="section-head section-head--split">
+          <h2 class="section-title" id="liveTitle" data-bind="page.liveTitle">Right now</h2>
+          <p class="section-lede" data-bind="page.liveLede">What I am working on and whether I can take something new. This panel updates itself.</p>
+        </header>
+        <div class="live__grid" id="liveRoot"></div>
+      </div>
+    </section>
+
     <!-- ============ PROCESS ============ -->
     <section class="section process" id="process" aria-labelledby="processTitle" data-spec="Process / tabs">
       <div class="container">
         <header class="section-head section-head--split">
-          <h2 class="section-title" id="processTitle">How I think</h2>
-          <p class="section-lede">Six stages, never strictly linear. Select one to see what happens there, what comes out of it, and how I approach it.</p>
+          <h2 class="section-title" id="processTitle" data-bind="page.processTitle">How I think</h2>
+          <p class="section-lede" data-bind="page.processLede">Six stages, never strictly linear. Select one to see what happens there, what comes out of it, and how I approach it.</p>
         </header>
         <div class="process__wrap">
           <div class="process__rail" role="tablist" aria-label="Design process stages" id="processTabs"></div>
@@ -283,7 +312,7 @@
     <section class="section work" id="work" aria-labelledby="workTitle" data-spec="Work / sticky story">
       <div class="container">
         <header class="section-head section-head--split">
-          <h2 class="section-title" id="workTitle">Selected work</h2>
+          <h2 class="section-title" id="workTitle" data-bind="page.workTitle">Selected work</h2>
           <div class="filters" role="group" aria-label="Filter projects" id="workFilters"></div>
         </header>
       </div>
@@ -292,19 +321,32 @@
         <ol class="work__chapters" id="workChapters" aria-label="Projects"></ol>
       </div>
       <div class="container work__more">
-        <a class="link-arrow" href="https://www.behance.net/afrozariju" target="_blank" rel="noopener" data-cursor="Open" data-bind-href="social.behance">See everything on Behance</a>
+        <a class="link-arrow" href="https://www.behance.net/afrozariju" target="_blank" rel="noopener" data-cursor="Open" data-bind-href="social.behance" data-bind="page.workMoreLabel">See everything on Behance</a>
       </div>
     </section>
 
     <!-- ============ FEATURED MOMENT (Huawei) ============ -->
     <section class="moment" id="moment" aria-labelledby="momentTitle" data-spec="Featured moment / cinematic"></section>
 
+    <!-- ============ GALLERY (v2) ============ -->
+    <section class="section gallery" id="gallery" aria-labelledby="galTitle" data-spec="Gallery / moodboard">
+      <div class="container">
+        <header class="section-head section-head--split">
+          <h2 class="section-title" id="galTitle" data-bind="page.galleryTitle">Gallery</h2>
+          <p class="section-lede" data-bind="page.galleryLede">Work, events and the moments in between. Select any image to see it larger.</p>
+        </header>
+        <div class="filters gal-filters" role="group" aria-label="Filter gallery" id="galFilters"></div>
+        <ul class="gal-grid" id="galGrid" aria-label="Gallery images"></ul>
+        <p class="visually-hidden" id="galStatus" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
     <!-- ============ EXPERIENCE ============ -->
     <section class="section experience" id="experience" aria-labelledby="expTitle" data-spec="Experience / timeline">
       <div class="container">
         <header class="section-head section-head--split">
-          <h2 class="section-title" id="expTitle">Where I've worked</h2>
-          <p class="section-lede">Select a company, or a bar on the timeline, to see the role and what I contributed.</p>
+          <h2 class="section-title" id="expTitle" data-bind="page.expTitle">Where I've worked</h2>
+          <p class="section-lede" data-bind="page.expLede">Select a company, or a bar on the timeline, to see the role and what I contributed.</p>
         </header>
         <div class="exp" id="expRoot"></div>
       </div>
@@ -314,8 +356,8 @@
     <section class="section tech" id="tech" aria-labelledby="techTitle" data-spec="Design meets technology / flow">
       <div class="container">
         <header class="section-head section-head--split">
-          <h2 class="section-title" id="techTitle">Design meets technology</h2>
-          <p class="section-lede">My computer science degree means I can follow a design all the way into code: talk constraints with engineers, spec states properly, and keep what ships close to what was designed.</p>
+          <h2 class="section-title" id="techTitle" data-bind="page.techTitle">Design meets technology</h2>
+          <p class="section-lede" data-bind="page.techLede">My computer science degree means I can follow a design all the way into code: talk constraints with engineers, spec states properly, and keep what ships close to what was designed.</p>
         </header>
         <div class="flow" id="flowRoot"></div>
       </div>
@@ -325,8 +367,8 @@
     <section class="section achievements" id="achievements" aria-labelledby="achTitle" data-spec="Milestones / archive">
       <div class="container">
         <header class="section-head section-head--split">
-          <h2 class="section-title" id="achTitle">Milestones</h2>
-          <p class="section-lede">Programs, competitions and leadership that shaped how I work.</p>
+          <h2 class="section-title" id="achTitle" data-bind="page.achTitle">Milestones</h2>
+          <p class="section-lede" data-bind="page.achLede">Programs, competitions and leadership that shaped how I work.</p>
         </header>
         <ol class="archive" id="archive"></ol>
       </div>
@@ -359,8 +401,8 @@
             <p class="field__error" id="f-email-err" role="alert"></p>
           </div>
           <fieldset class="field field--choice">
-            <legend class="field__legend">What is this about?</legend>
-            <div class="choices">
+            <legend class="field__legend" data-bind="page.contactLegend">What is this about?</legend>
+            <div class="choices" id="contactTopics">
               <label class="choice"><input type="radio" name="projectType" value="Full-time role" checked><span>Full-time role</span></label>
               <label class="choice"><input type="radio" name="projectType" value="Freelance project"><span>Freelance project</span></label>
               <label class="choice"><input type="radio" name="projectType" value="UX research"><span>UX research</span></label>
@@ -376,7 +418,7 @@
           <!-- Honeypot: hidden from people, visible to bots -->
           <div class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="company" tabindex="-1" autocomplete="off"></label></div>
           <button class="btn btn--warm btn--lg form__submit magnetic" type="submit" data-cursor="Send">
-            <span class="form__submit-label">Send message</span>
+            <span class="form__submit-label" data-bind="page.contactSubmit">Send message</span>
             <span class="spinner" aria-hidden="true"></span>
           </button>
           <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
@@ -397,11 +439,25 @@
         <ul class="footer__links" id="footerLinks" aria-label="Elsewhere"></ul>
         <div class="footer__end">
           <a href="#top" class="link-arrow link-arrow--up" data-cursor="Top">Back to top</a>
-          <p class="footer__copy">© <span id="year"></span> Afroza Riju</p>
+          <p class="footer__copy">© <span id="year"></span> <span data-bind="settings.name">Afroza Riju</span></p>
         </div>
       </div>
     </div>
   </footer>
+
+  <!-- Gallery lightbox (v2) -->
+  <dialog class="lightbox" id="lightbox" aria-label="Image viewer">
+    <div class="lightbox__stage" id="lbStage"></div>
+    <div class="lightbox__bar">
+      <div class="lightbox__text"><p class="lightbox__title" id="lbTitle"></p><p class="lightbox__cap" id="lbCap"></p></div>
+      <span class="lightbox__count" id="lbCount" aria-live="polite"></span>
+      <div class="lightbox__btns">
+        <button type="button" class="lb-btn" id="lbPrev" aria-label="Previous image"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5L7 10l5.5 5.5"/></svg></button>
+        <button type="button" class="lb-btn" id="lbNext" aria-label="Next image"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5L13 10l-5.5 5.5"/></svg></button>
+        <button type="button" class="lb-btn" id="lbClose" aria-label="Close image viewer"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
+      </div>
+    </div>
+  </dialog>
 
   <!-- Page transition curtain -->
   <div class="curtain" id="curtain" aria-hidden="true"><span class="curtain__label"></span></div>

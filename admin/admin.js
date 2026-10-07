@@ -7,11 +7,15 @@
  * protection is firestore.rules / storage.rules (admins/{uid} must exist).
  */
 import { getFirebase, isFirebaseConfigured } from '../js/firebase.js';
-import { seed } from '../js/seed-data.js';
+import { seed, SECTIONS } from '../js/seed-data.js';
 import { CASE_SECTIONS } from '../js/case-sections.js';
 import { initTheme } from '../js/theme.js';
-import { FONT_OPTIONS, FONT_PAIRS } from '../js/fonts.js';
-import { $, $$, esc, sanitizeHTML, slugify, debounce, toast, applyAccent, byOrder } from '../js/utils.js';
+import { FONT_OPTIONS, FONT_PAIRS, customPair } from '../js/fonts.js';
+import { PRESETS, PRESET_OPTIONS, COLOR_FIELDS, resolvePalette, applyThemeSettings } from '../js/palette.js';
+import { CTA_STYLES } from '../js/live.js';
+import { $, $$, esc, sanitizeHTML, slugify, debounce, toast, byOrder } from '../js/utils.js';
+
+export const STUDIO_VERSION = '2.0.0';
 
 /* ==========================================================================
    Schemas
@@ -35,6 +39,20 @@ const SCHEMAS = {
       ['Media', [F('coverImage', 'Cover image', 'image'), F('gallery', 'Gallery', 'gallery', { cover: 'coverImage' }), F('hue', 'Generated cover hue', 'number', { min: 0, max: 360, help: 'Colour (0–360) of the generated cover shown when there is no cover image.' })]],
       ['Case study', [F('caseStudy', 'Case-study sections', 'casestudy', { help: 'Sections without content are hidden on the site.' })]],
       ['Visibility', [ROW(F('published', 'Published on the site', 'toggle'), F('featured', 'Featured', 'toggle'))]]
+    ]
+  },
+  gallery: {
+    label: 'Gallery', singular: 'image', col: 'gallery',
+    title: (d) => d.title || d.caption || 'Untitled image', sub: (d) => [d.category, d.size !== 'normal' ? d.size : '', d.year].filter(Boolean).join(', '), thumb: (d) => d.image?.url,
+    flags: [['published', 'Shown', 'Hidden']],
+    filters: [['all', 'All'], ['published', 'Shown'], ['draft', 'Hidden']],
+    bulk: true,
+    defaults: { published: true, size: 'normal' },
+    groups: [
+      ['Image', [F('image', 'Image', 'image', { required: true, help: 'JPG, PNG or WebP. Large photos are resized in your browser before upload.' })]],
+      ['Details', [F('title', 'Title'), F('caption', 'Caption', 'textarea', { max: 200 }), ROW(F('category', 'Category', 'text', { help: 'Visitors can filter by this, e.g. Events, Work, Workshops' }), F('year', 'Year'))]],
+      ['Layout', [F('size', 'Tile size', 'select', { options: [['normal', 'Normal'], ['wide', 'Wide (2 columns)'], ['tall', 'Tall (2 rows)'], ['large', 'Large (2 × 2)']] }), F('link', 'Link (optional)', 'text', { help: 'Shown as "Open" in the image viewer. A URL or a case-study link.' })]],
+      ['Visibility', [F('published', 'Show on the site', 'toggle')]]
     ]
   },
   experience: {
@@ -112,16 +130,123 @@ const SINGLES = {
       ['Identity', [ROW(F('name', 'Name'), F('email', 'Contact email', 'text')), F('role', 'Role line'), ROW(F('location', 'Location'), F('resumeUrl', 'Résumé URL', 'url'))]],
       ['SEO', [F('seoTitle', 'SEO title', 'text', { max: 70 }), F('seoDescription', 'SEO description', 'textarea', { max: 170 }), F('favicon', 'Favicon', 'image', { help: 'Square PNG or SVG, at least 64×64.' })]],
       ['Page copy', [F('aboutStatement', 'About statement', 'textarea'), F('contactHeadline', 'Contact headline'), F('contactLede', 'Contact intro', 'textarea'), F('footerText', 'Footer statement')]],
-      ['Typography', [F('fontPair', 'Font pair', 'select', { options: FONT_OPTIONS, preview: previewFont, help: 'Applies to the whole site after you save. Preview without saving: add ?font=editorial (or any key) to the site URL.' })]],
-      ['Theme', [ROW(F('accentColor', 'Accent colour', 'color', { help: 'The site automatically deepens or lightens it per theme so text stays readable (4.5:1).' }), F('showGrain', 'Film grain texture', 'toggle')), F('showLoader', 'Intro loader on first visit', 'toggle')]]
+      ['Effects', [ROW(F('showGrain', 'Film grain texture', 'toggle'), F('showLoader', 'Intro loader on first visit', 'toggle'))]]
+    ],
+    note: 'Colours, fonts and the Let\u2019s talk button are in Design \u2192 Colours & fonts.'
+  },
+
+  /* ---------------- v2: Design ---------------- */
+  design: {
+    label: 'Colours & fonts', path: ['siteSettings', 'main'], base: seed.settings,
+    intro: 'Changes preview here in Studio straight away. Visitors see them after you save.',
+    live: (values) => applyThemeSettings(values, { persist: false }),
+    groups: [
+      ['Colour palette', [
+        F('palettePreset', 'Start from a palette', 'select', { options: PRESET_OPTIONS, onChange: applyPreset, help: 'Choosing a palette fills in the colours below. Change any colour to make it your own.' })
+      ]],
+      ['Dark theme', [ROW(...colorFields('dark'))]],
+      ['Light theme', [ROW(...colorFields('light'))]],
+      ['Fonts', [
+        F('fontPair', 'Font pair', 'select', { options: FONT_OPTIONS, preview: previewFont, help: 'Applies to the whole site after you save.' }),
+        ROW(F('customDisplayFont', 'Heading font (Google Fonts name)', 'text', { customFont: true, help: 'Exactly as on fonts.google.com, e.g. Sora or Libre Caslon Text' }),
+          F('customBodyFont', 'Body font (Google Fonts name)', 'text', { customFont: true, help: 'Leave empty to use the heading font' })),
+        F('customDisplayWeight', 'Heading weight', 'select', { customFont: true, options: [['300', 'Light 300'], ['400', 'Regular 400'], ['500', 'Medium 500'], ['600', 'Semibold 600'], ['700', 'Bold 700']] })
+      ]],
+      ['Text size', [ROW(
+        F('typeScale', 'Headings', 'range', { minNum: 0.8, maxNum: 1.25, step: 0.05, defaultNum: 1, format: (v) => `${Math.round(v * 100)}%` }),
+        F('bodyScale', 'Body text', 'range', { minNum: 0.9, maxNum: 1.2, step: 0.025, defaultNum: 1, format: (v) => `${Math.round(v * 100)}%` })
+      )]],
+      ["Let's talk button", [
+        ROW(F('ctaLabel', 'Button label', 'text', { max: 28 }), F('ctaHref', 'Button link', 'text', { help: '#contact scrolls to the form. A full URL opens in a new tab.' })),
+        F('ctaStyle', 'Animation', 'select', { options: CTA_STYLES })
+      ]]
+    ]
+  },
+
+  /* ---------------- v2: Page content (one Firestore doc, several editors) ---------------- */
+  layout: {
+    label: 'Sections & menu', path: ['pageContent', 'main'], base: seed.page,
+    intro: 'Choose which sections appear on the home page, in what order, and what the menus say.',
+    groups: [
+      ['Sections', [F('sections', 'Order and visibility', 'sections', { help: 'Drag a row, or use the arrows. Hidden sections are also removed from the menus.' })]],
+      ['Top menu (desktop)', [F('nav', 'Menu links', 'repeater', { itemLabel: 'link', maxItems: 8, fields: [{ name: 'label', label: 'Label', max: 24 }, { name: 'target', label: 'Goes to', type: 'select', options: SECTIONS }] })]],
+      ['Bottom tab bar (mobile)', [ROW(F('tabHome', 'Home tab'), F('tabAbout', 'About tab'), F('tabWork', 'Work tab')), ROW(F('tabCareer', 'Experience tab'), F('tabContact', 'Contact tab'))]]
+    ]
+  },
+  aboutpage: {
+    label: 'About & facts', path: ['pageContent', 'main'], base: seed.page,
+    intro: 'The About section. The long statement is in Settings → Page copy.',
+    groups: [
+      [null, [F('aboutTitle', 'Section heading', 'textarea', { max: 140 })]],
+      ['Facts row', [F('facts', 'Facts', 'repeater', { itemLabel: 'fact', maxItems: 6, help: 'Shown in a row under the statement. Four fit best on desktop.', fields: [{ name: 'label', label: 'Label', max: 40 }, { name: 'value', label: 'Text', max: 160 }] })]],
+      ['Capabilities', [F('capabilitiesTitle', 'Panel title', 'text', { max: 40, help: 'The skills themselves are edited in Portfolio → Skills.' })]]
+    ]
+  },
+  headings: {
+    label: 'Section headings', path: ['pageContent', 'main'], base: seed.page,
+    intro: 'The heading and short intro above each section.',
+    groups: [
+      ['How I think', [F('processTitle', 'Heading'), F('processLede', 'Intro', 'textarea')]],
+      ['Selected work', [ROW(F('workTitle', 'Heading'), F('workMoreLabel', 'Behance link label'))]],
+      ['Gallery', [F('galleryTitle', 'Heading'), F('galleryLede', 'Intro', 'textarea')]],
+      ['Experience', [F('expTitle', 'Heading'), F('expLede', 'Intro', 'textarea')]],
+      ['Design meets technology', [F('techTitle', 'Heading'), F('techLede', 'Intro', 'textarea')]],
+      ['Milestones', [F('achTitle', 'Heading'), F('achLede', 'Intro', 'textarea')]]
+    ]
+  },
+  live: {
+    label: 'Live & ticker', path: ['pageContent', 'main'], base: seed.page,
+    intro: 'The Right now panel and the moving ticker under the hero.',
+    groups: [
+      ['Right now', [F('liveTitle', 'Heading'), F('liveLede', 'Intro', 'textarea'),
+        F('liveAvailable', 'I am available for new work (green dot)', 'toggle'),
+        F('liveStatus', 'Status line', 'text', { max: 120 }),
+        ROW(F('liveCity', 'City shown with the clock'), F('liveTimezone', 'Time zone', 'select', { options: ['Asia/Dhaka', 'Asia/Kolkata', 'Asia/Dubai', 'Asia/Singapore', 'Asia/Tokyo', 'Europe/London', 'Europe/Berlin', 'America/New_York', 'America/Los_Angeles', 'Australia/Sydney', 'UTC'] }))]],
+      ['Currently (typed out one by one)', [F('liveNow', 'Lines', 'list', { help: 'One per line. Keep each under about 60 characters.' })]],
+      ['Counters', [F('stats', 'Counters', 'repeater', { itemLabel: 'counter', maxItems: 6, help: 'Number: type a number, or auto:projects, auto:companies, auto:milestones, auto:years or auto:gallery to count automatically.', fields: [{ name: 'value', label: 'Number', placeholder: '3 or auto:projects', max: 24 }, { name: 'suffix', label: 'After number', placeholder: '+', max: 6 }, { name: 'label', label: 'Label', max: 60 }] })]],
+      ['Moving ticker', [F('marqueeItems', 'Top row (solid)', 'list', { help: 'One per line' }), F('marqueeItems2', 'Bottom row (outlined)', 'list', { help: 'One per line. Leave empty for a single row.' }),
+        F('marqueeSpeed', 'Speed', 'range', { minNum: 0.3, maxNum: 3, step: 0.1, defaultNum: 1, format: (v) => `${v.toFixed(1)}×` })]]
+    ]
+  },
+  contactpage: {
+    label: 'Contact form', path: ['pageContent', 'main'], base: seed.page,
+    intro: 'Labels on the contact form. The heading, intro and email are in Settings.',
+    groups: [[null, [F('contactLegend', 'Question above the topics'), F('contactTopics', 'Topics to choose from', 'list', { help: 'One per line, up to 8. The chosen topic is shown with each message in Inbox.' }), F('contactSubmit', 'Send button label', 'text', { max: 30 })]]]
+  },
+  canvas: {
+    label: 'Loader & hero canvas', path: ['pageContent', 'main'], base: seed.page,
+    intro: 'Small words around the hero and the intro loader.',
+    groups: [
+      ['Intro loader', [F('loaderSteps', 'Loader steps', 'list', { help: 'One per line, up to 7. Shown while the site loads on a first visit.' })]],
+      ['Hero canvas frames', [ROW(F('framePhone', 'Phone frame name'), F('framePhoneCta', 'Phone button')), ROW(F('frameComponent', 'Component frame name'), F('frameContrast', 'Contrast card text')),
+        ROW(F('framePersonaTitle', 'Persona title'), F('framePersonaText', 'Persona text')), F('frameNoteMeta', 'Sticky note caption', 'text', { help: 'The sticky note text itself is in Hero.' })]],
+      ['Hero footer', [ROW(F('heroHint', 'Hint'), F('heroScroll', 'Scroll label'))]]
     ]
   }
 };
 
+/* ---------- Design helpers ---------- */
+function colorFields(theme) {
+  const names = { bg: 'Background', ink: 'Text', accent: 'Accent (links, focus)', warm: 'Buttons' };
+  return Object.entries(COLOR_FIELDS[theme]).map(([k, field]) => F(field, names[k], 'color', {
+    fallback: (ctx) => (PRESETS[ctx.widgets?.palettePreset?.get()] || PRESETS.original)[theme][k]
+  }));
+}
+function applyPreset(key, ctx, prev) {
+  const p = PRESETS[key];
+  // A preset leaves the fields on "default"; Custom copies the current colours so they can be edited
+  const current = resolvePalette({ ...ctx.get(), palettePreset: prev });
+  ['dark', 'light'].forEach((t) => Object.entries(COLOR_FIELDS[t]).forEach(([k, field]) => {
+    ctx.widgets[field]?.set(p ? '' : current[t][k]);
+  }));
+  ctx.onLive?.();
+}
+
 const NAV = [
   [null, [['overview', 'Overview', 'home']]],
-  ['Portfolio', [['projects', 'Projects', 'grid'], ['experience', 'Experience', 'case'], ['achievements', 'Achievements', 'star'], ['skills', 'Skills', 'layers']]],
-  ['Page', [['hero', 'Hero', 'spark'], ['featured', 'Featured moment', 'play'], ['process', 'Process', 'steps'], ['techflow', 'Design & tech', 'flow'], ['social', 'Social links', 'link']]],
+  ['Portfolio', [['projects', 'Projects', 'grid'], ['gallery', 'Gallery', 'image'], ['experience', 'Experience', 'case'], ['achievements', 'Achievements', 'star'], ['skills', 'Skills', 'layers']]],
+  ['Design', [['design', 'Colours & fonts', 'palette'], ['layout', 'Sections & menu', 'menu']]],
+  ['Page', [['hero', 'Hero', 'spark'], ['aboutpage', 'About & facts', 'user'], ['live', 'Live & ticker', 'pulse'], ['headings', 'Section headings', 'heading'], ['featured', 'Featured moment', 'play'], ['process', 'Process', 'steps'], ['techflow', 'Design & tech', 'flow'], ['contactpage', 'Contact form', 'chat'], ['canvas', 'Loader & canvas', 'frame'], ['social', 'Social links', 'link']]],
   ['Inbox', [['messages', 'Messages', 'mail']]],
   ['Site', [['settings', 'Settings', 'gear']]]
 ];
@@ -131,7 +256,12 @@ const NAV_ICONS = {
   layers: '<path d="M10 2.5l7.5 4-7.5 4-7.5-4z"/><path d="M2.5 10l7.5 4 7.5-4M2.5 13.5l7.5 4 7.5-4"/>', spark: '<path d="M10 2v5M10 13v5M2 10h5M13 10h5M4.5 4.5l3 3M12.5 12.5l3 3M15.5 4.5l-3 3M7.5 12.5l-3 3"/>',
   play: '<rect x="2.5" y="3.5" width="15" height="13" rx="2"/><path d="M8.5 7.5v5l4-2.5z"/>', steps: '<circle cx="4" cy="10" r="2"/><circle cx="10" cy="10" r="2"/><circle cx="16" cy="10" r="2"/><path d="M6 10h2M12 10h2"/>',
   flow: '<rect x="2" y="3" width="6" height="5" rx="1"/><rect x="12" y="12" width="6" height="5" rx="1"/><path d="M5 8v3a2 2 0 0 0 2 2h5"/>', link: '<path d="M8.5 11.5l3-3M7 13.5l-1.5 1.5a2.5 2.5 0 0 1-3.5-3.5L5.5 8M13 6.5L14.5 5A2.5 2.5 0 0 1 18 8.5L14.5 12"/>',
-  mail: '<rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5 7-5"/>', gear: '<circle cx="10" cy="10" r="2.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.3 4.3l1.8 1.8M13.9 13.9l1.8 1.8M15.7 4.3l-1.8 1.8M6.1 13.9l-1.8 1.8"/>'
+  mail: '<rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5 7-5"/>',
+  image: '<rect x="2.5" y="3.5" width="15" height="13" rx="1.5"/><circle cx="7" cy="8" r="1.5"/><path d="M3 15l4.5-4.5 3 3 2.5-2.5 4.5 4.5"/>',
+  palette: '<path d="M10 2.5a7.5 7.5 0 1 0 0 15c1 0 1.5-.7 1.5-1.4 0-.9-.8-1.2-.8-2.1 0-.8.6-1.5 1.5-1.5h1.8a3.5 3.5 0 0 0 3.5-3.5c0-3.6-3.4-6.5-7.5-6.5z"/><circle cx="6.5" cy="9" r="1"/><circle cx="9" cy="6" r="1"/><circle cx="12.5" cy="6.5" r="1"/>',
+  menu: '<path d="M3 5h14M3 10h14M3 15h9"/>', user: '<circle cx="10" cy="7" r="3"/><path d="M4 17c.8-3.2 3.2-5 6-5s5.2 1.8 6 5"/>',
+  pulse: '<path d="M2 10h3.5l2-5 3 10 2-5H18"/>', heading: '<path d="M5 4v12M15 4v12M5 10h10"/>',
+  chat: '<path d="M3 4.5h14v9H7.5L3 17z"/>', frame: '<path d="M5 2v16M15 2v16M2 5h16M2 15h16"/>', gear: '<circle cx="10" cy="10" r="2.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.3 4.3l1.8 1.8M13.9 13.9l1.8 1.8M15.7 4.3l-1.8 1.8M6.1 13.9l-1.8 1.8"/>'
 };
 
 /* ==========================================================================
@@ -227,12 +357,23 @@ function collectImagePaths(doc) {
 }
 
 /** Live sample of a font pair inside the admin */
-function previewFont(key, box) {
-  const p = FONT_PAIRS[key] || FONT_PAIRS.geist;
-  const id = `fp-${key}`;
-  if (!document.getElementById(id)) {
-    document.head.append(Object.assign(document.createElement('link'), { id, rel: 'stylesheet', href: `https://fonts.googleapis.com/css2?${p.url}&display=swap` }));
+function previewFont(key, box, ctx) {
+  let p = FONT_PAIRS[key] || FONT_PAIRS.geist;
+  const custom = key === 'custom';
+  if (custom) {
+    const w = ctx?.widgets || {};
+    p = customPair({ display: w.customDisplayFont?.get(), body: w.customBodyFont?.get(), weight: w.customDisplayWeight?.get() });
+    p.families.forEach((f) => {
+      const id = `fp-c-${slugify(f)}`;
+      if (!document.getElementById(id)) document.head.append(Object.assign(document.createElement('link'), { id, rel: 'stylesheet', href: `https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}:wght@400;700&display=swap` }));
+    });
+  } else {
+    const id = `fp-${key}`;
+    if (!document.getElementById(id)) {
+      document.head.append(Object.assign(document.createElement('link'), { id, rel: 'stylesheet', href: `https://fonts.googleapis.com/css2?${p.url}&display=swap` }));
+    }
   }
+  $$('[data-custom-font]', ctx?.root || document).forEach((n) => { n.hidden = !custom; });
   box.innerHTML = `<p style="font-family:${esc(p.display)};font-weight:${p.weight};letter-spacing:${p.tracking};font-size:30px;line-height:1.1">Designing digital experiences</p>
     <p style="font-family:${esc(p.body)};font-size:15px;color:var(--c-ink-2);margin-top:8px">I bring research, visual design and interaction design together to build products that are intuitive and accessible.</p>`;
 }
@@ -266,7 +407,6 @@ function inputWidget(f, value) {
   const counter = $('[data-count]', w);
   const upd = () => { if (counter) counter.textContent = `${input.value.length} / ${f.max}`; };
   input.addEventListener('input', upd); upd();
-  if (f.type === 'color') input.addEventListener('input', () => applyAccent(input.value));
   return {
     name: f.name, el: w, input,
     get: () => f.type === 'number' ? (input.value === '' ? null : Number(input.value)) : input.value.trim(),
@@ -274,7 +414,7 @@ function inputWidget(f, value) {
   };
 }
 
-function selectWidget(f, value) {
+function selectWidget(f, value, ctx) {
   const id = nextId();
   const s = el('select', 'f__input');
   s.id = id;
@@ -284,11 +424,14 @@ function selectWidget(f, value) {
   const w = wrap(f, s, id);
   if (f.preview) {
     const prev = el('div', 'font-preview');
-    const paint = () => f.preview(s.value, prev);
-    s.addEventListener('change', paint); paint();
+    const paint = () => f.preview(s.value, prev, ctx);
+    s.addEventListener('change', paint);
+    (ctx.afterBuild ||= []).push(paint); // first paint once every field exists
     w.insertBefore(prev, $('.f__error', w));
+    ctx.repaintPreview = paint;
   }
-  return { name: f.name, el: w, get: () => s.value };
+  if (f.onChange) { let prev = s.value; s.addEventListener('change', () => { f.onChange(s.value, ctx, prev); prev = s.value; }); }
+  return { name: f.name, el: w, get: () => s.value, set: (v) => { s.value = v; } };
 }
 
 function toggleWidget(f, value) {
@@ -507,10 +650,162 @@ function caseStudyWidget(f, value, ctx) {
   };
 }
 
+/* ---------- v2 widgets ---------- */
+
+/** Colour: swatch + hex text + "use default". Empty value = preset/default colour. */
+function colorWidget(f, value, ctx) {
+  const id = nextId();
+  const box = el('div', 'color-f');
+  box.innerHTML = `<input type="color" class="color-f__swatch" aria-label="Pick ${esc(f.label)}">
+    <input class="f__input color-f__hex" id="${id}" type="text" maxlength="7" spellcheck="false" autocomplete="off">
+    <button type="button" class="a-btn a-btn--sm a-btn--ghost" data-reset>Default</button>`;
+  const sw = $('input[type="color"]', box), hex = $('.color-f__hex', box), reset = $('[data-reset]', box);
+  let v = /^#[0-9a-f]{6}$/i.test(value || '') ? value.toLowerCase() : '';
+  const fallback = () => (f.fallback ? f.fallback(ctx) : '#888888');
+  const paint = () => {
+    const shown = v || fallback();
+    sw.value = shown; hex.value = v; hex.placeholder = `${shown} (default)`;
+    box.classList.toggle('is-default', !v); reset.hidden = !v;
+  };
+  const changed = () => { paint(); ctx.onLive?.(); };
+  sw.addEventListener('input', () => { v = sw.value.toLowerCase(); changed(); });
+  hex.addEventListener('input', () => {
+    let t = hex.value.trim(); if (t && !t.startsWith('#')) t = `#${t}`;
+    if (/^#[0-9a-f]{6}$/i.test(t)) { v = t.toLowerCase(); sw.value = v; box.classList.remove('is-default'); reset.hidden = false; ctx.onLive?.(); }
+    if (!t) { v = ''; changed(); }
+  });
+  hex.addEventListener('blur', paint);
+  reset.addEventListener('click', () => { v = ''; changed(); });
+  paint();
+  return { name: f.name, el: wrap(f, box, id), get: () => v, set: (x) => { v = x || ''; paint(); }, repaint: paint };
+}
+
+/** Range slider with a live value read-out. */
+function rangeWidget(f, value, ctx) {
+  const id = nextId();
+  const box = el('div', 'range-f');
+  box.innerHTML = `<input type="range" id="${id}" min="${f.minNum}" max="${f.maxNum}" step="${f.step}"><output></output>`;
+  const r = $('input', box), out = $('output', box);
+  r.value = value ?? f.defaultNum ?? 1;
+  const show = () => { out.textContent = f.format ? f.format(Number(r.value)) : r.value; };
+  r.addEventListener('input', () => { show(); ctx.onLive?.(); });
+  show();
+  return { name: f.name, el: wrap(f, box, id), get: () => Number(r.value), set: (x) => { r.value = x; show(); } };
+}
+
+/** Repeater: a list of small records (facts, stats, menu links). */
+function repeaterWidget(f, value) {
+  let items = (value || []).map((x) => (typeof x === 'object' && x ? { ...x } : {}));
+  const box = el('div', 'rep');
+  const list = el('div', 'rep__list');
+  const add = el('button', 'a-btn a-btn--sm', `+ Add ${esc(f.itemLabel || 'item')}`);
+  add.type = 'button';
+  box.append(list, add);
+  const render = (focusIndex = -1) => {
+    list.innerHTML = '';
+    if (!items.length) list.append(el('p', 'f__help', 'Nothing here yet.'));
+    items.forEach((it, i) => {
+      const row = el('div', 'rep__row');
+      row.style.setProperty('--cols', f.fields.length);
+      f.fields.forEach((sf) => {
+        const cell = el('label', 'rep__cell');
+        cell.innerHTML = `<span>${esc(sf.label)}</span>`;
+        let input;
+        if (sf.type === 'select') {
+          input = el('select', 'f__input');
+          input.innerHTML = sf.options.map((o) => (Array.isArray(o) ? o : [o, o])).map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('');
+          input.value = it[sf.name] ?? sf.options[0]?.[0] ?? '';
+          it[sf.name] = input.value;
+        } else {
+          input = el('input', 'f__input');
+          input.type = 'text';
+          input.value = it[sf.name] ?? '';
+          if (sf.placeholder) input.placeholder = sf.placeholder;
+          if (sf.max) input.maxLength = sf.max;
+        }
+        input.addEventListener(sf.type === 'select' ? 'change' : 'input', () => { it[sf.name] = input.value; });
+        cell.append(input);
+        row.append(cell);
+      });
+      const tools = el('div', 'rep__tools', `<button type="button" class="icon-btn" data-mv="-1" aria-label="Move up">↑</button><button type="button" class="icon-btn" data-mv="1" aria-label="Move down">↓</button><button type="button" class="icon-btn icon-btn--danger" data-rm aria-label="Remove">✕</button>`);
+      $$('[data-mv]', tools).forEach((b) => b.addEventListener('click', () => {
+        const j = i + Number(b.dataset.mv); if (j < 0 || j >= items.length) return;
+        [items[i], items[j]] = [items[j], items[i]]; render();
+      }));
+      $('[data-rm]', tools).addEventListener('click', () => { items.splice(i, 1); render(); });
+      row.append(tools);
+      list.append(row);
+      if (i === focusIndex) setTimeout(() => $('input, select', row)?.focus(), 0);
+    });
+    add.hidden = f.maxItems && items.length >= f.maxItems;
+  };
+  add.addEventListener('click', () => { items.push({}); render(items.length - 1); });
+  render();
+  const w = el('div', 'f');
+  w.innerHTML = `<p class="f__label"><span>${esc(f.label)}</span></p>`;
+  w.append(box);
+  if (f.help) w.append(el('p', 'f__help', esc(f.help)));
+  return {
+    name: f.name, el: w,
+    get: () => items.map((it) => Object.fromEntries(f.fields.map((sf) => [sf.name, String(it[sf.name] ?? '').trim()])))
+      .filter((it) => Object.values(it).some(Boolean))
+  };
+}
+
+/** Sections: drag or arrow to reorder, switch to show/hide. */
+function sectionsWidget(f, value) {
+  const labels = Object.fromEntries(SECTIONS);
+  let items = (Array.isArray(value) ? value : []).filter((x) => labels[x?.id]).map((x) => ({ id: x.id, visible: x.visible !== false }));
+  SECTIONS.forEach(([id]) => { if (!items.some((x) => x.id === id)) items.push({ id, visible: true }); });
+  const list = el('div', 'secs');
+  let dragFrom = null;
+  const render = () => {
+    list.innerHTML = '<div class="secs__fixed">Hero (always first)</div>';
+    items.forEach((it, i) => {
+      const r = el('div', `secs__row${it.visible ? '' : ' is-off'}`);
+      r.draggable = true;
+      r.innerHTML = `<span class="secs__grip" aria-hidden="true">⋮⋮</span>
+        <span class="secs__name">${esc(labels[it.id])}</span>
+        <span class="secs__tools">
+          <button type="button" class="icon-btn" data-mv="-1" aria-label="Move ${esc(labels[it.id])} up">↑</button>
+          <button type="button" class="icon-btn" data-mv="1" aria-label="Move ${esc(labels[it.id])} down">↓</button>
+          <button class="switch" type="button" role="switch" aria-checked="${it.visible}"><span class="switch__track" aria-hidden="true"></span><span>${it.visible ? 'Shown' : 'Hidden'}</span></button>
+        </span>`;
+      $$('[data-mv]', r).forEach((b) => b.addEventListener('click', () => {
+        const j = i + Number(b.dataset.mv); if (j < 0 || j >= items.length) return;
+        [items[i], items[j]] = [items[j], items[i]]; render();
+        $$(`.secs__row [data-mv="${b.dataset.mv}"]`, list)[j]?.focus();
+      }));
+      $('.switch', r).addEventListener('click', () => { it.visible = !it.visible; render(); });
+      r.addEventListener('dragstart', () => { dragFrom = i; r.classList.add('is-dragging'); });
+      r.addEventListener('dragend', () => r.classList.remove('is-dragging'));
+      r.addEventListener('dragover', (e) => { e.preventDefault(); r.classList.add('is-over'); });
+      r.addEventListener('dragleave', () => r.classList.remove('is-over'));
+      r.addEventListener('drop', (e) => {
+        e.preventDefault(); r.classList.remove('is-over');
+        if (dragFrom == null || dragFrom === i) return;
+        const [m] = items.splice(dragFrom, 1); items.splice(i, 0, m); dragFrom = null; render();
+      });
+      list.append(r);
+    });
+    list.append(el('div', 'secs__fixed', 'Footer (always last)'));
+  };
+  render();
+  const w = el('div', 'f');
+  w.innerHTML = `<p class="f__label"><span>${esc(f.label)}</span></p>`;
+  w.append(list);
+  if (f.help) w.append(el('p', 'f__help', esc(f.help)));
+  return { name: f.name, el: w, get: () => items.map((x) => ({ ...x })) };
+}
+
 function widget(f, value, ctx) {
   switch (f.type) {
+    case 'color': return colorWidget(f, value, ctx);
+    case 'range': return rangeWidget(f, value, ctx);
+    case 'repeater': return repeaterWidget(f, value, ctx);
+    case 'sections': return sectionsWidget(f, value, ctx);
     case 'toggle': return toggleWidget(f, value);
-    case 'select': return selectWidget(f, value);
+    case 'select': return selectWidget(f, value, ctx);
     case 'list': return listWidget(f, value);
     case 'tags': return tagsWidget(f, value);
     case 'richtext': return richWidget(f, value);
@@ -525,7 +820,13 @@ function buildForm(groups, data, ctx) {
   const root = el('div');
   const ws = [];
   ctx.widgets = {};
-  const add = (f, parent) => { const w = widget(f, data[f.name], ctx); w.f = f; ws.push(w); ctx.widgets[f.name] = w; parent.append(w.el); };
+  ctx.root = root;
+  ctx.afterBuild = [];
+  const add = (f, parent) => {
+    const w = widget(f, data[f.name], ctx); w.f = f; ws.push(w); ctx.widgets[f.name] = w;
+    if (f.customFont) w.el.dataset.customFont = '';
+    parent.append(w.el);
+  };
   groups.forEach(([title, fields]) => {
     const g = el('section', 'f-group', title ? `<h3 class="f-group__title">${esc(title)}</h3>` : '');
     fields.forEach((f) => {
@@ -547,6 +848,9 @@ function buildForm(groups, data, ctx) {
     ctx.widgets.coverImage.set = (v) => { orig(v); ctx.widgets.gallery.rerender(); };
   }
   const get = () => Object.fromEntries(ws.map((w) => [w.name, w.get()]));
+  ctx.get = get;
+  ctx.afterBuild.forEach((fn) => fn());
+  if (ctx.onLive) ['change', 'input'].forEach((ev) => root.addEventListener(ev, () => ctx.onLive()));
   const validate = () => {
     let first = null;
     ws.forEach((w) => {
@@ -643,10 +947,13 @@ async function viewOverview() {
   view().innerHTML = head('Overview', 'Everything visitors see on the portfolio, in one place.') + skeleton(3);
   try {
     const [projects, messages, experience, achievements] = await Promise.all([fetchCol('projects'), fetchCol('contactMessages'), fetchCol('experience'), fetchCol('achievements')]);
+    let needsV2 = false;
+    try { needsV2 = !(await fetchOne(['pageContent', 'main'])); } catch { needsV2 = true; }
     const unread = messages.filter((m) => !m.read).length;
     S.unread = unread; renderNav();
     const pub = projects.filter((p) => p.published).length;
     view().innerHTML = head('Overview', 'Everything visitors see on the portfolio, in one place.', '<a class="a-btn" href="../index.html" target="_blank" rel="noopener">View site</a>') + `
+      ${needsV2 && (projects.length || experience.length) ? `<div class="banner banner--v2"><p><strong>Version 2 is here.</strong> Gallery, the Right now panel, the ticker, section order, menus and every heading can now be edited. Add the v2 starting content once; your existing projects, settings and messages are not touched.</p><button class="a-btn a-btn--primary" type="button" id="importV2">Add v2 content</button></div>` : ''}
       ${!projects.length && !experience.length ? `<div class="banner"><p><strong>Firebase is connected but has no content yet.</strong> Import the default content to start from the current portfolio (projects, experience, achievements, skills, links and page copy). You can edit everything afterwards.</p><button class="a-btn a-btn--primary" type="button" id="importSeed">Import default content</button></div>` : ''}
       <div class="stats">
         <a class="stat" href="#/projects"><span class="stat__label">Published projects</span><span class="stat__value">${pub}</span><span class="stat__sub">${projects.length - pub} draft${projects.length - pub === 1 ? '' : 's'}</span></a>
@@ -659,7 +966,27 @@ async function viewOverview() {
       </div></div>
       <div class="panel"><h2>Content tools</h2><p class="muted" style="font-size:14px;max-width:60ch">Import default content writes the original portfolio content into Firebase. Items with the same ID are overwritten; anything you added yourself is kept.</p><p style="margin-top:12px"><button class="a-btn a-btn--sm" type="button" id="importSeed2">Import default content</button></p></div>`;
     [$('#importSeed'), $('#importSeed2')].forEach((b) => b?.addEventListener('click', importSeed));
+    $('#importV2')?.addEventListener('click', importV2);
   } catch (err) { view().innerHTML = head('Overview'); view().append(errorBox(err, viewOverview)); }
+}
+
+/** v2 upgrade: adds page content and the starter gallery without overwriting anything. */
+async function importV2() {
+  try {
+    const { db, fs } = await fb();
+    const ts = fs.serverTimestamp();
+    const batch = fs.writeBatch(db);
+    const existing = await fetchOne(['pageContent', 'main']);
+    // merge: true keeps anything already saved, so this is always safe to run
+    batch.set(fs.doc(db, 'pageContent', 'main'), { ...seed.page, ...(existing || {}), updatedAt: ts }, { merge: true });
+    const gallery = await fetchCol('gallery').catch(() => []);
+    if (!gallery.length) seed.gallery.forEach(({ id, ...rest }) => batch.set(fs.doc(db, 'gallery', id), { ...rest, createdAt: ts, updatedAt: ts }));
+    await batch.commit();
+    toast('Version 2 content added');
+    viewOverview();
+  } catch (err) {
+    toast(err?.code?.includes('permission') ? 'Permission denied. Deploy the new firestore.rules first (see README → Upgrading to v2).' : firestoreError(err), 7000);
+  }
 }
 
 async function importSeed() {
@@ -671,7 +998,8 @@ async function importSeed() {
     batch.set(fs.doc(db, 'siteSettings', 'main'), { ...seed.settings, updatedAt: ts });
     batch.set(fs.doc(db, 'heroContent', 'main'), { ...seed.hero, updatedAt: ts });
     batch.set(fs.doc(db, 'featured', 'huawei'), { ...seed.featured, updatedAt: ts });
-    const cols = { projects: seed.projects, experience: seed.experience, achievements: seed.achievements, skills: seed.skills, socialLinks: seed.social, processSteps: seed.process, techFlow: seed.techflow };
+    batch.set(fs.doc(db, 'pageContent', 'main'), { ...seed.page, updatedAt: ts });
+    const cols = { gallery: seed.gallery, projects: seed.projects, experience: seed.experience, achievements: seed.achievements, skills: seed.skills, socialLinks: seed.social, processSteps: seed.process, techFlow: seed.techflow };
     Object.entries(cols).forEach(([col, items]) => items.forEach(({ id, ...rest }) => batch.set(fs.doc(db, col, id), { ...rest, createdAt: ts, updatedAt: ts })));
     await batch.commit();
     toast('Default content imported');
@@ -683,7 +1011,8 @@ async function importSeed() {
 async function viewCollection(key, params) {
   const sc = SCHEMAS[key];
   let filter = 'all', query = '';
-  view().innerHTML = head(sc.label, '', `<button class="a-btn a-btn--primary" type="button" id="addItem">Add ${esc(sc.singular)}</button>`) +
+  const bulkBtn = sc.bulk ? `<label class="a-btn" for="bulkFiles">Upload many images</label><input type="file" id="bulkFiles" accept="image/*" multiple class="visually-hidden">` : '';
+  view().innerHTML = head(sc.label, sc.bulk ? 'Drop several photos at once with Upload many images; each becomes its own tile you can caption later.' : '', `${bulkBtn}<button class="a-btn a-btn--primary" type="button" id="addItem">Add ${esc(sc.singular)}</button>`) +
     `<div class="v-tools">
       <div class="search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/></svg><input class="f__input" type="search" placeholder="Search ${esc(sc.label.toLowerCase())}" aria-label="Search ${esc(sc.label.toLowerCase())}" id="q"></div>
       ${sc.filters ? `<div class="seg" role="group" aria-label="Filter">${sc.filters.map(([v, l], i) => `<button type="button" data-f="${v}" aria-pressed="${i === 0}">${l}</button>`).join('')}</div>` : ''}
@@ -811,6 +1140,35 @@ async function viewCollection(key, params) {
   }
 
   $('#addItem').addEventListener('click', () => edit(null));
+
+  /* Bulk upload: one document per image, captions added afterwards */
+  $('#bulkFiles')?.addEventListener('change', async (e) => {
+    const files = [...e.target.files].filter((f) => f.type.startsWith('image/'));
+    e.target.value = '';
+    if (!files.length) return;
+    const { db, fs } = await fb();
+    let done = 0;
+    const label = $('label[for="bulkFiles"]');
+    label.classList.add('is-busy');
+    for (const file of files) {
+      label.textContent = `Uploading ${done + 1} of ${files.length}…`;
+      const id = fs.doc(fs.collection(db, sc.col)).id;
+      const ctx = { col: sc.col, id, uploaded: [], removed: [] };
+      try {
+        const image = await uploadImage(file, ctx);
+        const title = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+        image.alt = title;
+        const doc = { ...(sc.defaults || {}), image, title, caption: '', category: '', year: '', link: '', order: items.length, createdAt: fs.serverTimestamp(), updatedAt: fs.serverTimestamp() };
+        await fs.setDoc(fs.doc(db, sc.col, id), doc);
+        items.push({ id, ...doc });
+        done++;
+        render();
+      } catch (err) { toast(`${file.name}: ${err.message || firestoreError(err)}`, 5000); }
+    }
+    label.classList.remove('is-busy');
+    label.textContent = 'Upload many images';
+    toast(`${done} image${done === 1 ? '' : 's'} added`);
+  });
   $('#q').addEventListener('input', debounce((e) => { query = e.target.value.trim().toLowerCase(); render(); }, 120));
   $$('.seg button').forEach((b) => b.addEventListener('click', () => {
     filter = b.dataset.f; $$('.seg button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); render();
@@ -828,6 +1186,7 @@ async function viewSingle(key) {
     const stored = await fetchOne(sc.path);
     const data = { ...sc.base, ...(stored || {}) };
     const ctx = { col: sc.path[0], id: sc.path[1], uploaded: [], removed: [] };
+    if (sc.live) ctx.onLive = debounce(() => { sc.live({ ...data, ...ctx.get() }); ctx.repaintPreview?.(); }, 60);
     const built = buildForm(sc.groups, data, ctx);
     const form = el('form', 'single-form');
     form.noValidate = true;
@@ -835,6 +1194,7 @@ async function viewSingle(key) {
     const actions = el('div', 'actions', `<span class="drawer__status" role="status" aria-live="polite"></span><button class="a-btn a-btn--primary" type="submit"><span>Save changes</span><i class="a-spin" aria-hidden="true"></i></button>`);
     form.append(actions);
     view().innerHTML = head(sc.label, sc.intro, stored ? '' : '<span class="badge">Using default content</span>');
+    if (sc.note) view().append(el('p', 'banner banner--note', esc(sc.note)));
     view().append(form);
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -843,7 +1203,10 @@ async function viewSingle(key) {
       btn.classList.add('is-busy'); status.textContent = 'Saving…'; status.className = 'drawer__status';
       try {
         const { db, fs } = await fb();
-        await fs.setDoc(fs.doc(db, ...sc.path), { ...(stored || {}), ...built.get(), updatedAt: fs.serverTimestamp() });
+        const latest = await fetchOne(sc.path); // other editors may share this document
+        const payload = { ...(latest || stored || {}), ...built.get(), updatedAt: fs.serverTimestamp() };
+        await fs.setDoc(fs.doc(db, ...sc.path), payload);
+        if (sc.path[0] === 'siteSettings') { S.settings = payload; applyThemeSettings(payload, { persist: false }); }
         if (ctx.removed.length) deleteFiles(ctx.removed);
         ctx.uploaded = []; ctx.removed = [];
         status.textContent = 'Saved'; toast('Changes saved');
@@ -935,6 +1298,7 @@ function route() {
   const params = new URLSearchParams(qs || '');
   renderNav();
   if ($('#drawer').open) $('#drawer').close();
+  applyThemeSettings(S.settings || {}, { persist: false }); // drop any unsaved colour preview
   if (key === 'overview') viewOverview();
   else if (key === 'messages') viewMessages();
   else if (SCHEMAS[key]) viewCollection(key, params);
@@ -1015,7 +1379,8 @@ async function start() {
     $('#gate').hidden = true; $('#shell').hidden = false;
     $('#userEmail').textContent = user.email;
     $('#signOut').onclick = async () => { await fbx.authMod.signOut(fbx.auth); toast('Signed out'); };
-    try { const s = await fetchOne(['siteSettings', 'main']); if (s?.accentColor) applyAccent(s.accentColor); } catch { /* ignore */ }
+    try { S.settings = await fetchOne(['siteSettings', 'main']) || {}; applyThemeSettings(S.settings, { persist: false }); } catch { /* ignore */ }
+    $('#studioVersion').textContent = `Studio v${STUDIO_VERSION}`;
     if (!location.hash) location.hash = '#/overview';
     route();
   });

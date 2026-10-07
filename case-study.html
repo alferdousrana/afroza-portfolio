@@ -17,12 +17,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap">
-  <script>try{var f=JSON.parse(localStorage.getItem('ar-font')||'null');if(f&&f.href){var l=document.createElement('link');l.id='font-pair';l.rel='stylesheet';l.href=f.href;document.head.appendChild(l);var s=document.documentElement.style;s.setProperty('--f-display',f.display);s.setProperty('--f-body',f.body);s.setProperty('--fw-display',f.weight);s.setProperty('--ls-display',f.tracking);}}catch(e){}</script>
+  <script>try{var f=JSON.parse(localStorage.getItem('ar-font')||'null');if(f&&f.href){[f.href,f.href2].forEach(function(h,i){if(!h)return;var l=document.createElement('link');l.id=i?'font-pair-2':'font-pair';l.rel='stylesheet';l.href=h;document.head.appendChild(l);});var s=document.documentElement.style;s.setProperty('--f-display',f.display);s.setProperty('--f-body',f.body);s.setProperty('--fw-display',f.weight);s.setProperty('--ls-display',f.tracking);}}catch(e){}</script>
   <link rel="stylesheet" href="./css/tokens.css">
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/animations.css">
   <link rel="stylesheet" href="./css/responsive.css">
   <link rel="stylesheet" href="./css/case-study.css">
+  <link rel="stylesheet" href="./css/v2.css">
+  <script>try{var c=localStorage.getItem('ar-theme-css');if(c){var s=document.createElement('style');s.id='ar-theme-css';s.textContent=c;document.head.appendChild(s);}}catch(e){}</script>
   <script>
     document.documentElement.classList.add('js');
     try{var t=localStorage.getItem('ar-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.dataset.theme=t;}catch(e){}
@@ -51,7 +53,13 @@
           <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         </button>
         <a class="btn btn--ghost btn--sm" href="./index.html#work" data-cursor="Back">All work</a>
-        <a class="btn btn--warm btn--sm magnetic" href="./index.html#contact" data-cursor="Let's talk">Let's talk</a>
+        <a class="cta-live magnetic" id="ctaLive" href="./index.html#contact" data-cursor="Let's talk" data-cta-style="live">
+          <span class="cta-live__ring" aria-hidden="true"></span>
+          <span class="cta-live__fill" aria-hidden="true"></span>
+          <span class="cta-live__dot" aria-hidden="true"></span>
+          <span class="cta-live__label">Let's talk</span>
+          <svg class="cta-live__arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5"/></svg>
+        </a>
       </div>
     </div>
   </header>
